@@ -66,7 +66,4 @@ def displayPage(pathname):
 
 
 if __name__ == '__main__':
-    host = '127.0.0.1'
-    if len(sys.argv) > 1:
-        host = sys.argv[1]
-    app.run_server(host=host, debug=True)
+    app.run_server()
