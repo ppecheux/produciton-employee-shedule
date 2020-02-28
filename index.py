@@ -15,7 +15,7 @@ import sys
 
 
 app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
+    dcc.Location(id='url'),
     html.Div([
         navBar,
         html.Div(id='pageContent')
@@ -33,7 +33,6 @@ def displayPage(pathname):
                 return file.layout
             else:
                 return login.layout
-                #file.layout
 
     if pathname == '/':
         if current_user.is_authenticated:
@@ -66,4 +65,4 @@ def displayPage(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)
