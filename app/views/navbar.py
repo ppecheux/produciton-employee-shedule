@@ -1,12 +1,9 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
-from app import app, server, SECOND_TO_DATE
+from app import app, server
 from flask_login import current_user
-from views import login, error, profile, user_admin, mix_page
-from datetime import datetime as dt
-from datetime import timedelta
-from math import exp, log
+from views import mix_page
 
 
 dashboard_pages = {'/mix_page': mix_page}

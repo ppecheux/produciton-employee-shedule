@@ -8,11 +8,9 @@ import dash_bootstrap_components as dbc
 from app import app, server
 from flask_login import logout_user, current_user
 
-
-from views import login, error, profile, user_admin, navbar
-from views.navbar import navBar, dashboard_pages, mix_page
+from views import login, error, profile, user_admin, navbar, mix_page
+from views.navbar import navBar, dashboard_pages
 from datetime import datetime as dt
-from math import exp, log
 import sys
 
 
@@ -30,23 +28,18 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def displayPage(pathname):
     for pathname_dashboard, file in dashboard_pages.items():
-        if pathname == pathname_dashboard:
-            if file:
-                if current_user.is_authenticated:
-                    return file.layout
-                else:
-                    return login.layout
+        if pathname == pathname_dashboard and file:
+            if current_user.is_authenticated:
+                return file.layout
+            else:
+                return login.layout
+                #file.layout
+
     if pathname == '/':
         if current_user.is_authenticated:
             return profile.layout
         else:
             return login.layout
-
-    if pathname == '/mix_page':
-        if current_user.is_authenticated:
-            return mix_page.layout
-        else:
-            return mix_page.layout
 
     elif pathname == '/logout':
         if current_user.is_authenticated:
