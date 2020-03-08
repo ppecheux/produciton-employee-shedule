@@ -16,12 +16,13 @@ import sys
 
 app.layout = html.Div([
     dcc.Location(id='url'),
-    dcc.Store(id='url_asked_at_login', storage_type='session'),
     html.Div([
         navBar,
         html.Div(id='pageContent')
     ])
 ], id='table-wrapper')
+
+
 
 
 @app.callback(Output('pageContent', 'children'),
@@ -69,4 +70,4 @@ def displayPage(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
