@@ -8,7 +8,6 @@ from app import app
 layout = dbc.Container([
     html.Br(),
     dbc.Container([
-        dcc.Location(id='err404', refresh=True),
         dbc.Container(
             html.Img(
                 src='/assets/dash-logo-stripe.svg',

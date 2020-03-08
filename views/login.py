@@ -2,6 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 
 from app import app, User
 from flask_login import login_user
@@ -11,7 +12,6 @@ from werkzeug.security import check_password_hash
 layout = dbc.Container([
     html.Br(),
     dbc.Container([
-        dcc.Location(id='urlLogin', refresh=True),
         html.Div([
             dbc.Container(
                 html.Img(
@@ -54,23 +54,20 @@ layout = dbc.Container([
 ################################################################################
 # LOGIN BUTTON CLICKED / ENTER PRESSED - REDIRECT TO PAGE1 IF LOGIN DETAILS ARE CORRECT
 ################################################################################
-@app.callback(Output('urlLogin', 'pathname'),
+@app.callback(Output('url', 'pathname'),
               [Input('loginButton', 'n_clicks'),
               Input('usernameBox', 'n_submit'),
               Input('passwordBox', 'n_submit')],
               [State('usernameBox', 'value'),
-               State('passwordBox', 'value')])
-def sucess(n_clicks, usernameSubmit, passwordSubmit, username, password):
+               State('passwordBox', 'value'),
+               State('url', 'pathname')])
+def sucess(n_clicks, usernameSubmit, passwordSubmit, username, password, pathname):
     user = User.query.filter_by(username=username).first()
     if user:
         if check_password_hash(user.password, password):
             login_user(user)
-            return '/mix_page'
-        else:
-            pass
-    else:
-        pass
-
+            return pathname
+    raise PreventUpdate
 
 ################################################################################
 # LOGIN BUTTON CLICKED / ENTER PRESSED - RETURN RED BOXES IF LOGIN DETAILS INCORRECT

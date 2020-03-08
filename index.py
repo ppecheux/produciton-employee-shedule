@@ -2,9 +2,9 @@
 
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
-
+from dash.exceptions import PreventUpdate
 from app import app, server
 from flask_login import logout_user, current_user
 
@@ -16,6 +16,7 @@ import sys
 
 app.layout = html.Div([
     dcc.Location(id='url'),
+    dcc.Store(id='url_asked_at_login', storage_type='session'),
     html.Div([
         navBar,
         html.Div(id='pageContent')
@@ -23,46 +24,66 @@ app.layout = html.Div([
 ], id='table-wrapper')
 
 
+@app.callback([Output('pageContent', 'children'),
+               #Output('url_asked_at_login', 'data')
+               ],
+              [Input('url', 'pathname')],
+              #[State('url_asked_at_login', 'data')]
+              )
+def displayPage(pathname,
+                # url_asked_at_login
+                ):
+    # print(f'asked{url_asked_at_login}')
+    print(f'pathname{pathname}')
+    layout = None
 
-@app.callback(Output('pageContent', 'children'),
-              [Input('url', 'pathname')])
-def displayPage(pathname):
     for pathname_dashboard, file in dashboard_pages.items():
         if pathname == pathname_dashboard and file:
             if current_user.is_authenticated:
-                return file.layout
+                layout = file.layout
             else:
-                return login.layout
+                layout = login.layout
+
+    # if pathname == '/login_success':
+    #     layout = displayPage(url_asked_at_login, None)
+
+    # print(f'asked{url_asked_at_login}')
+    # print(f'pathname{pathname}')
 
     if pathname == '/':
         if current_user.is_authenticated:
-            return profile.layout
+            layout = profile.layout
         else:
-            return login.layout
+            layout = login.layout
 
     elif pathname == '/logout':
         if current_user.is_authenticated:
             logout_user()
-        return login.layout
+        layout = login.layout
 
-    if pathname == '/profile':
+    elif pathname == '/profile':
         if current_user.is_authenticated:
-            return profile.layout
+            layout = profile.layout
         else:
-            return login.layout
+            layout = login.layout
 
-    if pathname == '/admin':
+    elif pathname == '/admin':
         if current_user.is_authenticated:
             if current_user.admin:
-                return user_admin.layout
+                layout = user_admin.layout
             else:
-                return error.layout
+                layout = error.layout
         else:
-            return login.layout
+            layout = login.layout
 
-    else:
-        return error.layout
+    elif not layout:
+        print(f'error path{pathname}')
+        layout = error.layout
+
+    return [layout,
+            # pathname
+            ]
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
