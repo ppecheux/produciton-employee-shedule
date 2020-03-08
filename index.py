@@ -65,9 +65,9 @@ def displayPage(pathname):
 
     elif not layout:
         layout = error.layout
-
+    print(f'path {pathname}')
     return layout
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
