@@ -35,7 +35,7 @@ def merge_mix(arr: list) -> list:
         list -- mixed_array
     """
     level = len(arr)
-    while level>=4:
+    while level>=3:
         arr = array_split(arr, level)
         arr = list(map(list, arr))
         arr = mix_distribute_uniformly(arr)
