@@ -8,7 +8,7 @@ from dash.exceptions import PreventUpdate
 from app import app, server
 from flask_login import logout_user, current_user
 
-from views import login, error, profile, user_admin, navbar, mix_page
+from views import login, error, profile, user_admin, navbar, mix_page, success_login
 from views.navbar import navBar, dashboard_pages
 from datetime import datetime as dt
 import sys
@@ -16,10 +16,15 @@ import sys
 
 app.layout = html.Div([
     dcc.Location(id='url'),
+
     html.Div([
         navBar,
-        html.Div(id='pageContent')
-    ])
+
+        html.Div(id='pageContent'),
+        dcc.Link('redirect', id='success_login_link'),
+        
+    ] + [dcc.Link(pathname_dashboard.replace('_',' ').replace('/',' '), href=pathname_dashboard) for pathname_dashboard in dashboard_pages.keys()]
+    )
 ], id='table-wrapper')
 
 
@@ -29,7 +34,7 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def displayPage(pathname):
     layout = None
-
+    print(f'path_name {pathname}')
     for pathname_dashboard, file in dashboard_pages.items():
         if pathname == pathname_dashboard and file:
             if current_user.is_authenticated:
@@ -63,9 +68,12 @@ def displayPage(pathname):
         else:
             layout = login.layout
 
+    elif pathname == '/success_login':
+        layout = success_login.layout
+
     elif not layout:
         layout = error.layout
-    print(f'path {pathname}')
+        print(f'path error {pathname}')
     return layout
 
 
