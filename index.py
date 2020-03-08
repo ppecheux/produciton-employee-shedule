@@ -24,17 +24,9 @@ app.layout = html.Div([
 ], id='table-wrapper')
 
 
-@app.callback([Output('pageContent', 'children'),
-               #Output('url_asked_at_login', 'data')
-               ],
-              [Input('url', 'pathname')],
-              #[State('url_asked_at_login', 'data')]
-              )
-def displayPage(pathname,
-                # url_asked_at_login
-                ):
-    # print(f'asked{url_asked_at_login}')
-    print(f'pathname{pathname}')
+@app.callback(Output('pageContent', 'children'),
+              [Input('url', 'pathname')])
+def displayPage(pathname):
     layout = None
 
     for pathname_dashboard, file in dashboard_pages.items():
@@ -43,12 +35,6 @@ def displayPage(pathname,
                 layout = file.layout
             else:
                 layout = login.layout
-
-    # if pathname == '/login_success':
-    #     layout = displayPage(url_asked_at_login, None)
-
-    # print(f'asked{url_asked_at_login}')
-    # print(f'pathname{pathname}')
 
     if pathname == '/':
         if current_user.is_authenticated:
@@ -77,12 +63,9 @@ def displayPage(pathname,
             layout = login.layout
 
     elif not layout:
-        print(f'error path{pathname}')
         layout = error.layout
 
-    return [layout,
-            # pathname
-            ]
+    return layout
 
 
 if __name__ == '__main__':
