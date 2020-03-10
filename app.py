@@ -6,7 +6,6 @@ from flask_login import LoginManager, UserMixin
 from users_mgt import db, User as base
 from config import config
 
-
 app = dash.Dash(__name__)
 server = app.server
 app.config.suppress_callback_exceptions = True
