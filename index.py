@@ -19,7 +19,6 @@ app.layout = html.Div([
 
     html.Div([
         navBar,
-
         html.Div(id='pageContent'),
         dcc.Link('redirect', id='success_login_link'),
         
@@ -37,10 +36,10 @@ def displayPage(pathname):
     print(f'path_name {pathname}')
     for pathname_dashboard, file in dashboard_pages.items():
         if pathname == pathname_dashboard and file:
-            if current_user.is_authenticated:
-                layout = file.layout
-            else:
-                layout = login.layout
+            layout = file.layout
+            # if current_user.is_authenticated:
+            # else:
+            #     layout = login.layout
 
     if pathname == '/':
         if current_user.is_authenticated:
