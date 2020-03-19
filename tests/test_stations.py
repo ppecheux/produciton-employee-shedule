@@ -23,7 +23,6 @@ class TestAssignStations(unittest.TestCase):
 
         self.assertFalse(df_with_stations.station.isnull().values.any())
 
-<<<<<<< HEAD
     def weighted_average(self):
 
         #Creating a dataframe for the test
@@ -58,7 +57,6 @@ class TestAssignStations(unittest.TestCase):
 
         print(Weig_avg)
 
-=======
     def test_limited_nb_of_stations_used(self):
         nb_stations = 2
         df = pd.DataFrame({
@@ -88,7 +86,6 @@ class TestAssignStations(unittest.TestCase):
         for station in df.station.unique():
             df_station = df[df.station == station]
             self.assertEqual(df_station.station.count(), 1 + df_station.index.max() - df_station.index.min())
->>>>>>> 32d622d3d42b610d6f3aff1aa8a9fa67abbd7626
 
 
 
