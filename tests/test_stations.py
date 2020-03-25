@@ -5,6 +5,7 @@ import unittest
 import pandas as pd
 import numpy as np
 from algos.stations import assign_stations
+from stations.py import weighted_average
 
 class TestAssignStations(unittest.TestCase):
 
@@ -23,10 +24,9 @@ class TestAssignStations(unittest.TestCase):
 
         self.assertFalse(df_with_stations.station.isnull().values.any())
 
-    def weighted_average(self):
+    def test_weighted_average(self):
 
         #Creating a dataframe for the test
-
         df = pd.DataFrame({
             "cabineA":[12, 15, 25,24],
             "cabineB":[26,27,19,12],
@@ -35,27 +35,12 @@ class TestAssignStations(unittest.TestCase):
 
         Nb_cabs = [20, 14, 8]  #Number of cabs in a list
 
-        tab = df.to_numpy()    #Dataframe to numpy to be able to calculate the weighted average
-
-        nb_act =tab.shape[0]   #Number of activities
-
-        Weig_avg = []          #Creating an empty list where we will put the weighted avg for each activity
-
-        avg = 0                #temp variables
-        Nb_cabs_tot = 0
+        #Make sure that the weighted average is right
+        tab = weighted_average(df, Nb_cabs)
+        self.assertEqual(tab[])
 
 
-        for i in range (len(Nb_cabs)-1):
-            Nb_cabs_tot += Nb_cabs[i]       #Number total of cabs
-
-        for i in range (nb_act-1):          #Determination of the weighted avg of each activity
-            for j in range (2):
-                avg += tab[i][j] * Nb_cabs[j]
-            avg = avg/Nb_cabs_tot
-            Weig_avg.append(avg)
-
-
-        print(Weig_avg)
+        
 
     def test_limited_nb_of_stations_used(self):
         nb_stations = 2
