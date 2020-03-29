@@ -66,7 +66,7 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_
 )
 def data_table_suggested_order(init_data):
     if not init_data:
-        PreventUpdate
+        raise PreventUpdate
 
     # create a list of time needed for each product
     try:

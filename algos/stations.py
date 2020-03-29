@@ -2,6 +2,19 @@
 import pandas as pd
 import numpy as np
 def assign_stations(activities: list, nb_stations: int) -> dict:
+	#df = pd.read_json(activities, encoding='records')
+	df = pd.DataFrame.from_records(activities)
+	if df.empty:
+		return []
+	
+	#begin algo
+	df['station_nb'] = df.fixed_station_nb
+	df.loc[df.fixed_station_nb == '', 'station_nb'] = np.nan
+	#end algo
+	
+	df = df[['product', 'activity_block_name', 'activity_block_duration', 'station_nb']]
+
+	activities = df.to_dict('rows')
 	return activities
 
 def weighted_average(df_in,Nb_cabs):

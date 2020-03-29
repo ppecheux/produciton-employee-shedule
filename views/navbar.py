@@ -3,17 +3,17 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output
 from app import app, server
 from flask_login import current_user
-from views import mix_page
+from views import mix_page, station_page
 
 
-dashboard_pages = {'/mix_page': mix_page}
+dashboard_pages = {'/mix_page': mix_page, '/station_page': station_page}
 
 navBar = dbc.NavbarSimple(id='navBar',
                           children=[],
                           sticky='top',
                           dark=False,
                           fluid=True,  # for simple
-                          expand='xl'
+                          #expand='xl'
                           # className='navbar navbar-expand-lg navbar-dark bg-primary',
                           )
 
