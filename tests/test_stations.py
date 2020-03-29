@@ -5,6 +5,7 @@ import unittest
 import pandas as pd
 import numpy as np
 from algos.stations import assign_stations
+from algos.stations import weighted_average
 
 class TestAssignStations(unittest.TestCase):
 
@@ -23,39 +24,32 @@ class TestAssignStations(unittest.TestCase):
 
         self.assertFalse(df_with_stations.station.isnull().values.any())
 
-    def weighted_average(self):
+    def test_weighted_average(self):
 
         #Creating a dataframe for the test
-
-        df = pd.DataFrame({
-            "cabineA":[12, 15, 25,24],
-            "cabineB":[26,27,19,12],
-            "cabineC":[14,28,22,16]},
+        df1 = pd.DataFrame({
+            "cabine1":[12, 15, 25,24],
+            "cabine2":[26,27,19,12],
+            "cabine3":[14,28,22,16]},
             index = ["act1","act2", "act3", "act4"])
 
-        Nb_cabs = [20, 14, 8]  #Number of cabs in a list
-
-        tab = df.to_numpy()    #Dataframe to numpy to be able to calculate the weighted average
-
-        nb_act =tab.shape[0]   #Number of activities
-
-        Weig_avg = []          #Creating an empty list where we will put the weighted avg for each activity
-
-        avg = 0                #temp variables
-        Nb_cabs_tot = 0
+        #Make sure that the weighted average is right
+        Nb_cabs1 = [20, 14, 8]
+        df_test1 = weighted_average(df1, Nb_cabs1)
+        self.assertEqual(df_test1.loc["act3", "Weighted average"], ((25*20+19*14+22*8)/(20+14+8)))
 
 
-        for i in range (len(Nb_cabs)-1):
-            Nb_cabs_tot += Nb_cabs[i]       #Number total of cabs
+        #Make sure that the weighted average is right with zero cabs
+        Nb_cabs2 = [0, 10, 8]
+        df_test2 = weighted_average(df1, Nb_cabs2)
+        self.assertEqual(df_test2.loc["act3", "Weighted average"], ((19*10+22*8)/(10+8)))
 
-        for i in range (nb_act-1):          #Determination of the weighted avg of each activity
-            for j in range (2):
-                avg += tab[i][j] * Nb_cabs[j]
-            avg = avg/Nb_cabs_tot
-            Weig_avg.append(avg)
+        #Make sure that values errors are raised when necessary
 
 
-        print(Weig_avg)
+
+
+        
 
     def test_limited_nb_of_stations_used(self):
         nb_stations = 2
