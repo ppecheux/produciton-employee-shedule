@@ -54,9 +54,10 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_
             'There was an error processing this file.'
         ])
 
+    df.columns = map(str.lower, df.columns)
     df = df[[column for column in table_colums.keys()]]
 
-    return [[{'name': col, 'id': col} for col in df.columns], df.to_dict('records'), ]
+    return [[{'name': col.lower(), 'id': col.lower()} for col in df.columns], df.to_dict('records'), ]
 
 
 @app.callback(
