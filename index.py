@@ -20,12 +20,9 @@ app.layout = html.Div([
     html.Div([
         navBar,
         html.Div(id='pageContent'),
-        dcc.Link('redirect', id='success_login_link'),
         
-    ] + [dcc.Link(pathname_dashboard.replace('_',' ').replace('/',' '), href=pathname_dashboard) for pathname_dashboard in dashboard_pages.keys()]
-    )
-], id='table-wrapper')
-
+    ], id='table-wrapper')
+])
 
 
 
@@ -45,7 +42,7 @@ def displayPage(pathname):
         if current_user.is_authenticated:
             layout = profile.layout
         else:
-            layout = login.layout
+            layout = mix_page.layout
 
     elif pathname == '/logout':
         if current_user.is_authenticated:

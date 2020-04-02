@@ -26,6 +26,8 @@ def navBar_children(input1):
                                 href=href))
         for href in dashboard_pages.keys()
     ]
+
+    """
     if current_user.is_authenticated:
         if current_user.admin == 1:
             navBarContents = DashboardNavItems + [
@@ -56,7 +58,10 @@ def navBar_children(input1):
                     ],
                 ),
             ]
-            return navBarContents
+    """
 
-    else:
-        return ''
+    return DashboardNavItems
+    #return navBarContents
+
+    # else:
+    #     return ''
