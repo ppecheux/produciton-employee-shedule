@@ -65,7 +65,6 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_
 def data_table_suggested_order(init_data, nb_stations):
     if not init_data:
         raise PreventUpdate
-    print(f'init data = {init_data} {type(init_data)}')
     # create a list of time needed for each product
     try:
         activities = []
@@ -75,9 +74,7 @@ def data_table_suggested_order(init_data, nb_stations):
                 activities.append(row)
     except TypeError:
         raise PreventUpdate
-    #print(json.dumps(activities))
     suggested_stations = assign_stations(activities, nb_stations)
-    print(suggested_stations)
     if not suggested_stations:
         raise PreventUpdate
     return suggested_stations
@@ -100,7 +97,6 @@ def figure_graph_suggested_order(table_data):
     for station in table_data_names:
         if not np.isnan(station):
             station_durations[int(station)] = df.loc[df.station_nb == station, 'activity_block_duration'].sum()
-    print(station_durations)
     data = [
         {
             'x': [nb],
@@ -108,8 +104,8 @@ def figure_graph_suggested_order(table_data):
             'type': 'bar',
             'name': f'station {nb}'
         } for nb, duration in station_durations.items()] + [
-        {'x': list(range(len(station_durations))), 'y': [np.mean(
-            list(station_durations.values()))], 'name': 'average station duration'}
+        {'x': list(station_durations.keys()), 'y': [np.mean(
+            list(station_durations.values()))]*len(station_durations), 'name': 'average station duration'}
     ]
 
     figure = {
