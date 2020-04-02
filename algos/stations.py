@@ -1,7 +1,7 @@
 "In this file, we want to assign stations to activity blocks"
 import pandas as pd
 import numpy as np
-def assign_stations(activities: list, nb_stations: int) -> dict:
+def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 	#df = pd.read_json(activities, encoding='records')
 	df = pd.DataFrame.from_records(activities)
 	if df.empty:
@@ -17,7 +17,7 @@ def assign_stations(activities: list, nb_stations: int) -> dict:
 	activities = df.to_dict('rows')
 	return activities
 
-def weighted_average(df_in,Nb_cabs):
+def weighted_average(df_in, Nb_cabs):
 
 	nb_act = df.shape[0]   #Number of activities
 	Weig_avg = []          #Creating an empty list where we will put the weighted avg for each activity
