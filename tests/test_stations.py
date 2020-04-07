@@ -27,28 +27,22 @@ class TestAssignStations(unittest.TestCase):
     def test_weighted_average(self):
 
         #Creating a dataframe for the test
-        df1 = pd.DataFrame({
-            "cabine1":[12, 15, 25,24],
-            "cabine2":[26,27,19,12],
-            "cabine3":[14,28,22,16]},
-            index = ["act1","act2", "act3", "act4"])
+        df = pd.DataFrame({
+            "cabine1":[12, 15, 25,24,16],
+            "cabine2":[26,27,19,12,18],
+            "cabine3":[14,28,22,16,23]},
+            index = ["act1","act2", "act3", "act4", "act5"])
 
         #Make sure that the weighted average is right
         Nb_cabs1 = [20, 14, 8]
-        df_test1 = weighted_average(df1, Nb_cabs1)
-        self.assertEqual(df_test1.loc["act3", "Weighted average"], ((25*20+19*14+22*8)/(20+14+8)))
+        df_test = weighted_average(df, Nb_cabs1)
+        self.assertEqual(df_test.loc["act5", "Weighted average"], ((16*20+18*14+23*8)/(20+14+8)))
 
 
         #Make sure that the weighted average is right with zero cabs
         Nb_cabs2 = [0, 10, 8]
-        df_test2 = weighted_average(df1, Nb_cabs2)
+        df_test2 = weighted_average(df, Nb_cabs2)
         self.assertEqual(df_test2.loc["act3", "Weighted average"], ((19*10+22*8)/(10+8)))
-
-        #Make sure that values errors are raised when necessary
-
-
-
-
         
 
     def test_limited_nb_of_stations_used(self):
