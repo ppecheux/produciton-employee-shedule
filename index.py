@@ -8,17 +8,24 @@ from dash.exceptions import PreventUpdate
 from app import app, server
 from flask_login import logout_user, current_user
 
-from views import login, error, profile, user_admin, navbar, mix_page, success_login
-from views.navbar import navBar, dashboard_pages
+from views import login, error, profile, user_admin, mix_page, success_login
+from views import mix_page, station_page
+
 from datetime import datetime as dt
 import sys
 
+dashboard_pages = {'/mix_page': mix_page, '/station_page': station_page}
 
 app.layout = html.Div([
     dcc.Location(id='url'),
 
     html.Div([
-        navBar,
+        dbc.NavbarSimple(id='navBar',
+                          children=[],
+                          sticky='top',
+                          dark=False,
+                          fluid=True,
+                          ),
         html.Div(id='pageContent'),
         
     ], id='table-wrapper')
@@ -72,6 +79,16 @@ def displayPage(pathname):
         print(f'path error {pathname}')
     return layout
 
+@app.callback(
+    Output('navBar', 'children'),
+    [Input('pageContent', 'children')])
+def navBar_children(input1):
+    DashboardNavItems = [
+        dbc.NavItem(dbc.NavLink(href.replace('/', '').title().replace('-', ' '),
+                                href=href))
+        for href in dashboard_pages.keys()
+    ]
+    return DashboardNavItems
 
 if __name__ == '__main__':
     app.run_server(debug=True)
