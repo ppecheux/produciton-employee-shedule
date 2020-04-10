@@ -28,7 +28,7 @@ table_colums = {"name": "text", "time": "numeric", "quantity": "numeric"}
                State('table_initial_quantity_time', 'data'),
                State('table_initial_quantity_time', 'columns')])
 def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_data, columns):
-    
+
     # case we want to add a row
     print(columns)
     user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
@@ -36,7 +36,7 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_
         init_data.append({c['id']: '' for c in columns})
         return [columns, init_data]
     print('upload')
-    #case we upload data
+    # case we upload data
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
@@ -98,9 +98,11 @@ def data_table_suggested_order(init_data):
 
 @app.callback(
     Output('graph_suggested_order', 'figure'),
-    [Input('table_suggested_order', 'data')]
+    [Input('table_suggested_order', 'data'),
+     Input('input_shift_duration_hour', 'value'),
+     Input('input_operator_efficiency', 'value')]
 )
-def figure_graph_suggested_order(table_data):
+def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_operator_efficiency):
     if not table_data:
         raise PreventUpdate
 
@@ -113,42 +115,58 @@ def figure_graph_suggested_order(table_data):
             'type': 'bar',
             'name': name
         } for name in set(table_data_names)] + [
-        {'x': list(range(len(table_data_names))), 'y': [np.mean(
-            table_data_times)]*len(table_data_names), 'name': 'average production time'}
+        {
+            'x': list(range(len(table_data_names))),
+            'y': [np.mean(table_data_times)]*len(table_data_names),
+            'name': 'average production time'}
+    ]+[
+        {
+            'x': list(range(len(table_data_names))),
+            'y': [input_shift_duration_hour*60*input_operator_efficiency/(len(table_data_names)*100)] * len(table_data_names),
+            'name': 'takt time'
+        }
     ]
 
-    figure = {
-        'data': data,
-        'layout': {
-            'title': 'order of production visualization',
-            'xaxis': {'title': 'rank on the production line'},
-            'yaxis': {'title': 'production time'}
-        }
-    }
-    return figure
+    return {'data': data}
 
 
 layout = dbc.Container([
+    html.H1('Change takt time by tweaking this parameters: '),
+    dbc.Row([
+            dbc.Col([
+                    html.Div(['shift duration in Hour : ',
+                              dcc.Input(id="input_shift_duration_hour", type='number',
+                                        placeholder="shift duration: H", value=8, style={'width': 60}),
+                              ]),
+                    ]),
+            dbc.Col([
+                    html.Div(['operator efficiency in % : ',
+                              dcc.Input(id="input_operator_efficiency", type='number',
+                                        placeholder="operator efficiency: %", value=91, style={'width': 60}),
+                              ]),
+                    ]),
+            ]),
     html.H1('List of product needed to be produced'),
-    dcc.Upload(id='upload_mix_data',
-               children=html.Div(
-                   [
-                       'Drag and Drop or ',
-                       html.A('Select File'),
-                       ' (csv or xls) \n must have name, time and quantity columns'
-                   ]
-               ),
-               style={
-                   'width': '100%',
-                   'height': '60px',
-                   'lineHeight': '60px',
-                   'borderWidth': '1px',
-                   'borderStyle': 'dashed',
-                   'borderRadius': '5px',
-                   'textAlign': 'center',
-                   'margin': '10px'
-               },
-               ),
+    dcc.Upload(
+        id='upload_mix_data',
+        children=html.Div(
+            [
+                'Drag and Drop or ',
+                html.A('Select File'),
+                ' (csv or xls) \n must have name, time and quantity columns'
+            ]
+        ),
+        style={
+            'width': '100%',
+            'height': '60px',
+            'lineHeight': '60px',
+            'borderWidth': '1px',
+            'borderStyle': 'dashed',
+            'borderRadius': '5px',
+            'textAlign': 'center',
+            'margin': '10px'
+        },
+    ),
     dash_table.DataTable(
         id='table_initial_quantity_time',
         columns=[{'id': name, 'name': name, 'type': type}
@@ -168,6 +186,13 @@ layout = dbc.Container([
         ]
     ),
     dcc.Graph(
-        id='graph_suggested_order'
+        id='graph_suggested_order',
+        figure={
+            'layout': {
+                'title': 'order of production visualization',
+                'xaxis': {'title': 'rank on the production line'},
+                'yaxis': {'title': 'production time'}
+            }
+        }
     )
 ])
