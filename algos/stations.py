@@ -8,7 +8,12 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 		return []
 	
 	#begin algo
+	df_weighted_avg = activities_weighted_avg(df, pd.DataFrame.from_records(products))
 	df['station_nb'] = df.fixed_station_nb
+
+
+
+
 	df.loc[df.fixed_station_nb == '', 'station_nb'] = np.nan
 	#end algo
 	
@@ -17,13 +22,27 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 	activities = df.to_dict('rows')
 	return activities
 
+def activities_weighted_avg(df_activities, df_products) -> pd.DataFrame:
+	df_products = df_products.groupby(['product']).sum()
+	total_quantity_product = df_products.quantity.sum()
+	df_activities = df_activities.join(df_products, on='product')
+
+	df_activities['duration_times_quantity'] = df_activities['activity_block_duration'] * df_activities['quantity']
+	df_activities = df_activities[['activity_block_name', 'duration_times_quantity']].groupby(['activity_block_name']).sum()
+	df_activities['weighted_average'] = df_activities.duration_times_quantity/total_quantity_product
+
+	return df_activities
+
+
+
 def weighted_average(df_in, Nb_cabs):
+	""" renvoyer une liste de temps moyenne pondéré de chaque activité """
 
 	nb_act = df_in.shape[0]   #Number of activities
 	Weig_avg = []          #Creating an empty list where we will put the weighted avg for each activity
 	avg = 0                #temp variables
 	Nb_cabs_tot = 0
-	print(df_in)
+	#print(df_in)
 
 	#Make sure that the df and the Nb_cabs are made of float or int or <0
 	for i in range(len(Nb_cabs)):
@@ -66,7 +85,7 @@ def weighted_average(df_in, Nb_cabs):
 		columns = ['Weighted average']
 		)
 
-	print(df_out)
+	#print(df_out)
 	return(df_out)
 
 def arrange_stations(df_in, takt_time: int, nb_stations: int):
@@ -92,17 +111,19 @@ def arrange_stations(df_in, takt_time: int, nb_stations: int):
 		'Station' : Station_list,
 		'Time total' : time},
 		index = df_in.index)
-	print(df_out)
+	#print(df_out)
 	return(df_out)
 
+if __name__ == "__main__":
+	pass
+	
+	Nb_cabs = [20, 14, 8]  #Number of cabs in a list
 
-Nb_cabs = [20, 14, 8]  #Number of cabs in a list
+	df = pd.DataFrame({
+		"cabine1":[12,15,25,24,16],
+		"cabine2":[26,27,19,12,18],
+		"cabine3":[14,28,22,16,23],},
+		index = ["act1","act2", "act3", "act4", "act5"])
 
-df = pd.DataFrame({
-    "cabine1":[12,15,25,24,16],
-    "cabine2":[26,27,19,12,18],
-    "cabine3":[14,28,22,16,23],},
-    index = ["act1","act2", "act3", "act4", "act5"])
-
-df_out = weighted_average(df, Nb_cabs)
-arrange_stations(df_out, 40, 28)
+	df_out = weighted_average(df, Nb_cabs)
+	arrange_stations(df_out, 40, 28)
