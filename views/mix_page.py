@@ -114,7 +114,8 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
             'y': [table_data_times[table_data_names.index(name)]]*table_data_names.count(name),
             'type': 'bar',
             'name': name
-        } for name in set(table_data_names)] + [
+        } for name in set(table_data_names)
+    ]+[
         {
             'x': list(range(len(table_data_names))),
             'y': [np.mean(table_data_times)]*len(table_data_names),
@@ -183,7 +184,9 @@ layout = dbc.Container([
             {'id': 'name', 'name': 'name'},
             {'id': 'time', 'name': 'time'},
             {'id': 'cumulated_time', 'name': 'cumulated_time'}
-        ]
+        ],
+        export_format='csv',
+        export_headers='names'
     ),
     dcc.Graph(
         id='graph_suggested_order',
