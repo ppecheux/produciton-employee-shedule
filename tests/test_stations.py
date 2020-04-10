@@ -61,7 +61,7 @@ class TestAssignStations(unittest.TestCase):
 
         self.assertTrue(len(df_with_stations.station_nb.unique()) <= nb_stations)
 
-    def test_stations_are_not_overlapping(self):
+    def futur_test_stations_are_not_overlapping(self):
         df = self.df_activities
         df['fixed_station_nb'] = ['sation1', 'station3', 'station2', 'station3']
 
@@ -69,6 +69,8 @@ class TestAssignStations(unittest.TestCase):
         records_with_stations = assign_stations(
             activities=records, nb_stations=1, products=self.df_product)
         df = pd.DataFrame.from_dict(records_with_stations)
+
+        print(df)
 
         for station in df.station_nb.unique():
             df_station = df[df.station_nb == station]

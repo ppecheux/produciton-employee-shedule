@@ -9,12 +9,24 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 	
 	#begin algo
 	df_weighted_avg = activities_weighted_avg(df, pd.DataFrame.from_records(products))
-	df['station_nb'] = df.fixed_station_nb
 
+	df_weighted_avg['station_nb'] = [np.nan] * len(df_weighted_avg)
+	duration_zero = 0
+	takt_time = 2
+	if isinstance(df_weighted_avg["duration_times_quantity"].values[0], np.timedelta64):
+		duration_zero = pd.Timedelta('0 days')
+		takt_time = pd.Timedelta("1 min")
 
+	cummulated_duration = duration_zero
+	station_nb = 1
+	for activity in df_weighted_avg.index:
+		df_weighted_avg.loc[activity, "station_nb"] = station_nb
+		cummulated_duration += df_weighted_avg.loc[activity, 'duration_times_quantity']
+		if cummulated_duration > takt_time:
+			station_nb += 1
+			cummulated_duration = duration_zero
 
-
-	df.loc[df.fixed_station_nb == '', 'station_nb'] = np.nan
+	df = df.join(df_weighted_avg, on='activity_block_name')
 	#end algo
 	
 	df = df[['product', 'activity_block_name', 'activity_block_duration', 'station_nb']]
@@ -115,7 +127,6 @@ def arrange_stations(df_in, takt_time: int, nb_stations: int):
 	return(df_out)
 
 if __name__ == "__main__":
-	pass
 	
 	Nb_cabs = [20, 14, 8]  #Number of cabs in a list
 
