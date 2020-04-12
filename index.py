@@ -1,5 +1,3 @@
-# import for requirements
-
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
@@ -9,12 +7,12 @@ from app import app, server
 from flask_login import logout_user, current_user
 
 from views import login, error, profile, user_admin, mix_page, success_login
-from views import mix_page, station_page
+from views import mix_page, station_page, operator_page
 
 from datetime import datetime as dt
 import sys
 
-dashboard_pages = {'/mix_page': mix_page, '/station_page': station_page}
+dashboard_pages = {'/mix': mix_page, '/station': station_page, '/operator': operator_page}
 app.layout = html.Div([
     dcc.Location(id='url'),
     html.Div([
@@ -82,7 +80,7 @@ def displayPage(pathname):
     [Input('pageContent', 'children')])
 def navBar_children(input1):
     DashboardNavItems = [
-        dbc.NavItem(dbc.NavLink(href.replace('/', '').title().replace('-', ' '),
+        dbc.NavItem(dbc.NavLink(href.replace('/', '').title().replace('_', ' ').capitalize(),
                                 href=href))
         for href in dashboard_pages.keys()
     ]

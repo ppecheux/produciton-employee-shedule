@@ -11,6 +11,7 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
 from views.functions_for_views.functions_for_callbacks import update_table_from_upload
+from views.functions_for_views.input_components import takt_time_input
 
 from algos.production_mix import merge_mix
 
@@ -110,20 +111,7 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 
 layout = dbc.Container([
     html.H1('Change takt time by tweaking this parameters: '),
-    dbc.Row([
-            dbc.Col([
-                    html.Div(['shift duration in Hour : ',
-                              dcc.Input(id="input_shift_duration_hour", type='number',
-                                        placeholder="shift duration: H", value=8, style={'width': 60}),
-                              ]),
-                    ]),
-            dbc.Col([
-                    html.Div(['operator efficiency in % : ',
-                              dcc.Input(id="input_operator_efficiency", type='number',
-                                        placeholder="operator efficiency: %", value=91, style={'width': 60}),
-                              ]),
-                    ]),
-            ]),
+    takt_time_input,
     html.H1('List of product needed to be produced'),
     dcc.Upload(
         id='upload_mix_data',

@@ -108,15 +108,7 @@ def figure_graph_suggested_order(table_data):
             list(station_durations.values()))]*len(station_durations), 'name': 'average station duration'}
     ]
 
-    figure = {
-        'data': data,
-        'layout': {
-            'title': 'station workload',
-            'xaxis': {'title': 'rank on the production line'},
-            'yaxis': {'title': 'station duration'}
-        }
-    }
-    return figure
+    return {'data': data}
 
 
 layout = dbc.Container([
@@ -158,10 +150,6 @@ layout = dbc.Container([
         id='table_nb_products',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
                 {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
-        # data=pd.DataFrame({
-        #     "product": ["cabine type 1", "cabine type 2", "cabine type 3"],
-        #     "quantity": [3, 2, 5]
-        # }).to_dict('records'),
         style_data_conditional=[{
             'if': {'column_id': 'product'},
             'backgroundColor': '#f8f8f8',
@@ -178,6 +166,13 @@ layout = dbc.Container([
         ]
     ),
     dcc.Graph(
-        id='graph_suggested_order_stations'
+        id='graph_suggested_order_stations',
+        figure={
+            'layout': {
+                'title': 'workload on stations',
+                'xaxis': {'title': 'station number'},
+                'yaxis': {'title': 'station duration'}
+            }
+        }
     )
 ])
