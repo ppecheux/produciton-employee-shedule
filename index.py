@@ -15,10 +15,8 @@ from datetime import datetime as dt
 import sys
 
 dashboard_pages = {'/mix_page': mix_page, '/station_page': station_page}
-
 app.layout = html.Div([
     dcc.Location(id='url'),
-
     html.Div([
         dbc.NavbarSimple(id='navBar',
                           children=[],

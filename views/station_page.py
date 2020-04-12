@@ -1,6 +1,4 @@
-import base64
 import datetime
-import io
 import numpy as np
 import pandas as pd
 from dash import callback_context
@@ -11,7 +9,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
-import json
+from views.functions_for_views.functions_for_callbacks import update_table_from_upload
 
 from algos.stations import assign_stations
 
@@ -24,10 +22,9 @@ table_colums = {"product": "text", "activity_block_name": "text",
               [Input('upload_station_data', 'contents'),
                Input('add_sation_row', 'n_clicks')],
               [State('upload_station_data', 'filename'),
-               State('upload_station_data', 'last_modified'),
                State('table_initial_stations', 'data'),
                State('table_initial_stations', 'columns')])
-def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_data, columns):
+def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, columns):
 
     # case we want to add a row
     user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
@@ -35,27 +32,7 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_
         init_data.append({c['id']: '' for c in columns})
         return [columns, init_data]
     # case we upload data
-    content_type, content_string = contents.split(',')
-
-    decoded = base64.b64decode(content_string)
-    try:
-        if 'csv' in filename:
-            # Assume that the user uploaded a CSV file
-            df = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')))
-        elif 'xls' in filename:
-            # Assume that the user uploaded an excel file
-            df = pd.read_excel(io.BytesIO(decoded))
-    except Exception as e:
-        print(e)
-        return html.Div([
-            'There was an error processing this file.'
-        ])
-
-    df.columns = map(str.lower, df.columns)
-    df = df[[column for column in table_colums.keys()]]
-
-    return [[{'name': col.lower(), 'id': col.lower()} for col in df.columns], df.to_dict('records'), ]
+    return update_table_from_upload(contents, filename, table_colums)
 
 @app.callback(
     Output('table_nb_products', 'data'),
@@ -66,9 +43,10 @@ def data_table_nb_products(table_initial_stations, table_nb_products):
     if not table_initial_stations:
         raise PreventUpdate
     df = pd.DataFrame.from_records(table_initial_stations)
-    df_nb_products = pd.DataFrame.from_records(table_nb_products)
-    if set(df['product'].unique()) == set(df_nb_products['product'].unique()):
-        raise PreventUpdate
+    if table_nb_products:
+        df_nb_products = pd.DataFrame.from_records(table_nb_products)
+        if set(df['product'].unique()) == set(df_nb_products['product'].unique()):
+            raise PreventUpdate
     df_nb_products = pd.DataFrame({
         'product': list(df['product'].unique()),
         'quantity': [1]*len(df['product'].unique())
@@ -83,7 +61,7 @@ def data_table_nb_products(table_initial_stations, table_nb_products):
      ]
 )
 def data_table_suggested_order(init_data, table_nb_products, nb_stations):
-    if not init_data:
+    if not init_data or not table_nb_products:
         raise PreventUpdate
     # create a list of time needed for each product
     try:
@@ -96,7 +74,6 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
     except TypeError:
         raise PreventUpdate
     suggested_stations = assign_stations(activities, table_nb_products, nb_stations)
-    print(suggested_stations)
     if not suggested_stations:
         raise PreventUpdate
     return suggested_stations

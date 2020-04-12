@@ -48,7 +48,6 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 
 def activities_weighted_avg(df_activities, df_products) -> pd.DataFrame:
 	df_products = df_products.groupby(['product']).sum()
-	print(df_products)
 	total_quantity_product = df_products.quantity.sum()
 	df_activities = df_activities.join(df_products['quantity'], on='product')
 
