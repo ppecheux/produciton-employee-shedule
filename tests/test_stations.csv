@@ -1,3 +1,11 @@
 product,activity_block_name,activity_block_duration,fixed_station_nb
-zfa,fra,2,1
-far,brz,4,2
+"cabine type 1
+",motor,2,1
+"cabine type 1
+",lights,4,2
+"cabine type 1
+",roof,3,
+"cabine type 1
+",doors,5,
+"cabine type 2
+",roof,3,

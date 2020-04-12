@@ -57,6 +57,23 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_
 
     return [[{'name': col.lower(), 'id': col.lower()} for col in df.columns], df.to_dict('records'), ]
 
+@app.callback(
+    Output('table_nb_products', 'data'),
+    [Input('table_initial_stations', 'data')],
+    [State('table_nb_products', 'data')]
+)
+def data_table_nb_products(table_initial_stations, table_nb_products):
+    if not table_initial_stations:
+        raise PreventUpdate
+    df = pd.DataFrame.from_records(table_initial_stations)
+    df_nb_products = pd.DataFrame.from_records(table_nb_products)
+    if set(df['product'].unique()) == set(df_nb_products['product'].unique()):
+        raise PreventUpdate
+    df_nb_products = pd.DataFrame({
+        'product': list(df['product'].unique()),
+        'quantity': [1]*len(df['product'].unique())
+    })
+    return df_nb_products.to_dict('records')
 
 @app.callback(
     Output('table_suggested_order_stations', 'data'),
@@ -79,6 +96,7 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
     except TypeError:
         raise PreventUpdate
     suggested_stations = assign_stations(activities, table_nb_products, nb_stations)
+    print(suggested_stations)
     if not suggested_stations:
         raise PreventUpdate
     return suggested_stations
@@ -129,18 +147,6 @@ layout = dbc.Container([
     html.Div('enter the number of stations on the production line'),
     dcc.Input(id='nb_station_input', value=1, type='number',
               min=1, placeholder='number of stations'),
-    html.Div('Enter the list of product needed to be produced on the same line'),
-    dash_table.DataTable(
-        id='table_nb_products',
-        columns=[{'id': name, 'name': name, 'type': type}
-                 for name, type in {"product": "text", "quantity": "numeric"}.items()],
-        data=pd.DataFrame({
-            "product": ["cabine type 1", "cabine type 2", "cabine type 3"],
-            "quantity": [3, 2, 5]
-        }).to_dict('records'),
-        editable=True,
-        row_deletable=True
-    ),
     html.Div('Enter the list of activities for the production'),
     dcc.Upload(id='upload_station_data',
                children=html.Div(
@@ -170,6 +176,20 @@ layout = dbc.Container([
         row_deletable=True
     ),
     html.Button('Add row', id='add_sation_row'),
+    html.Div('Enter the list of product needed to be produced on the same line'),
+    dash_table.DataTable(
+        id='table_nb_products',
+        columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
+                {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
+        # data=pd.DataFrame({
+        #     "product": ["cabine type 1", "cabine type 2", "cabine type 3"],
+        #     "quantity": [3, 2, 5]
+        # }).to_dict('records'),
+        style_data_conditional=[{
+            'if': {'column_id': 'product'},
+            'backgroundColor': '#f8f8f8',
+        }]
+    ),
     html.H3('Suggested stations of for the activity blocks on the production line'),
     dash_table.DataTable(
         id='table_suggested_order_stations',

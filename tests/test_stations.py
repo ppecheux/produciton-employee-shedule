@@ -109,5 +109,20 @@ class TestAssignStations(unittest.TestCase):
         df_w = activities_weighted_avg(df, df_products)
         self.assertEqual(pd.to_timedelta(df_w.weighted_average.values[0]), df.activity_block_duration.mean())
 
+    def test_assign_station_one_product_two_stations(self):
+        df_activities = pd.DataFrame({
+            "product": ["cabineA", "cabineA"],
+            "activity_block_name": ["activity1", "activity2"],
+            "activity_block_duration":  [pd.Timedelta(minutes=1), pd.Timedelta(minutes=1)],
+            "fixed_station_nb": [np.nan]*2
+        })
+        df_product = pd.DataFrame({
+            "product": ["cabineA"],
+            "quantity": [1]
+        })
+        stations = assign_stations(df_activities.to_records(), df_product.to_records(), 2)
+        df_stations = pd.DataFrame.from_records(stations)
+        self.assertEqual(list(df_stations.station_nb.values), [1, 2])
+
 if __name__ == "__main__":
     unittest.main()

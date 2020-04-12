@@ -11,20 +11,31 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 	df_weighted_avg = activities_weighted_avg(df, pd.DataFrame.from_records(products))
 
 	df_weighted_avg['station_nb'] = [np.nan] * len(df_weighted_avg)
-	duration_zero = 0
-	takt_time = 2
-	if isinstance(df_weighted_avg["duration_times_quantity"].values[0], np.timedelta64):
-		duration_zero = pd.Timedelta('0 days')
-		takt_time = pd.Timedelta("1 min")
 
-	cummulated_duration = duration_zero
+	#compute time per station:
+	rest_production_duration = df_weighted_avg['weighted_average'].sum()
+	rest_nb_stations = nb_stations
+	time_per_station = rest_production_duration/rest_nb_stations
+
+	cummulated_duration = 0
+	if isinstance(df_weighted_avg["weighted_average"].values[0], np.timedelta64):
+		cummulated_duration = pd.Timedelta('0 days')
+
 	station_nb = 1
 	for activity in df_weighted_avg.index:
-		df_weighted_avg.loc[activity, "station_nb"] = station_nb
-		cummulated_duration += df_weighted_avg.loc[activity, 'duration_times_quantity']
-		if cummulated_duration > takt_time:
+
+		cummulated_duration_on_middle_of_activity = cummulated_duration + df_weighted_avg.loc[activity, 'weighted_average']/2
+		cummulated_duration += df_weighted_avg.loc[activity, 'weighted_average']
+		while cummulated_duration_on_middle_of_activity > time_per_station:
+			cummulated_duration_on_middle_of_activity = df_weighted_avg.loc[activity, 'weighted_average']/2
+			cummulated_duration = df_weighted_avg.loc[activity, 'weighted_average']
 			station_nb += 1
-			cummulated_duration = duration_zero
+			rest_nb_stations -= 1
+			time_per_station = rest_production_duration/rest_nb_stations
+
+		df_weighted_avg.loc[activity, "station_nb"] = station_nb
+		rest_production_duration -= df_weighted_avg.loc[activity, 'weighted_average']
+
 
 	df = df.join(df_weighted_avg, on='activity_block_name')
 	#end algo
@@ -33,11 +44,13 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 
 	activities = df.to_dict('rows')
 	return activities
+	
 
 def activities_weighted_avg(df_activities, df_products) -> pd.DataFrame:
 	df_products = df_products.groupby(['product']).sum()
+	print(df_products)
 	total_quantity_product = df_products.quantity.sum()
-	df_activities = df_activities.join(df_products, on='product')
+	df_activities = df_activities.join(df_products['quantity'], on='product')
 
 	df_activities['duration_times_quantity'] = df_activities['activity_block_duration'] * df_activities['quantity']
 	df_activities = df_activities[['activity_block_name', 'duration_times_quantity']].groupby(['activity_block_name']).sum()
