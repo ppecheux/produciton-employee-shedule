@@ -81,9 +81,10 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
 
 @app.callback(
     Output('graph_suggested_order_stations', 'figure'),
-    [Input('table_suggested_order_stations', 'data')]
+    [Input('table_suggested_order_stations', 'data')],
+    [State('graph_suggested_order_stations', 'figure')]
 )
-def figure_graph_suggested_order(table_data):
+def figure_graph_suggested_order(table_data, figure):
     if not table_data:
         raise PreventUpdate
     df = pd.DataFrame.from_records(table_data)
@@ -97,7 +98,7 @@ def figure_graph_suggested_order(table_data):
         if not np.isnan(station):
             station_durations[int(station)] = df.loc[df.station_nb ==
                                                      station, 'activity_block_duration'].sum()
-    data = [
+    figure['data'] = [
         {
             'x': [nb],
             'y': [duration],
@@ -108,7 +109,7 @@ def figure_graph_suggested_order(table_data):
             list(station_durations.values()))]*len(station_durations), 'name': 'average station duration'}
     ]
 
-    return {'data': data}
+    return figure
 
 
 layout = dbc.Container([

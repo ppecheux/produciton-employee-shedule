@@ -78,15 +78,16 @@ def data_table_suggested_order(init_data):
     Output('graph_suggested_order', 'figure'),
     [Input('table_suggested_order', 'data'),
      Input('input_shift_duration_hour', 'value'),
-     Input('input_operator_efficiency', 'value')]
+     Input('input_operator_efficiency', 'value')],
+    [State('graph_suggested_order', 'figure')]
 )
-def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_operator_efficiency):
+def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_operator_efficiency, figure):
     if not table_data:
         raise PreventUpdate
 
     table_data_names = [row['name'] for row in table_data]
     table_data_times = [float(row['time']) for row in table_data]
-    data = [
+    figure['data'] = [
         {
             'x': [indice for indice, v in enumerate(table_data_names) if v == name],
             'y': [table_data_times[table_data_names.index(name)]]*table_data_names.count(name),
@@ -106,7 +107,7 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
         }
     ]
 
-    return {'data': data}
+    return figure
 
 
 layout = dbc.Container([
