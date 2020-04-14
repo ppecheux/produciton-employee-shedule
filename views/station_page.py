@@ -10,6 +10,7 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
 from views.functions_for_views.functions_for_callbacks import update_table_from_upload
+from views.functions_for_views.input_components import takt_time_input
 
 from algos.stations import assign_stations
 
@@ -81,10 +82,12 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
 
 @app.callback(
     Output('graph_suggested_order_stations', 'figure'),
-    [Input('table_suggested_order_stations', 'data')],
+    [Input('table_suggested_order_stations', 'data'),
+     Input('input_shift_duration_hour', 'value'),
+     Input('input_operator_efficiency', 'value')],
     [State('graph_suggested_order_stations', 'figure')]
 )
-def figure_graph_suggested_order(table_data, figure):
+def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_operator_efficiency, figure):
     if not table_data:
         raise PreventUpdate
     df = pd.DataFrame.from_records(table_data)
@@ -107,12 +110,20 @@ def figure_graph_suggested_order(table_data, figure):
         } for nb, duration in station_durations.items()] + [
         {'x': list(station_durations.keys()), 'y': [np.mean(
             list(station_durations.values()))]*len(station_durations), 'name': 'average station duration'}
+    ]+[
+        {
+            'x': [name + 1 for name in range(len(table_data_names))],
+            'y': [input_shift_duration_hour*60*input_operator_efficiency/(len(table_data_names)*100)] * len(table_data_names),
+            'name': 'takt time'
+        }
     ]
 
     return figure
 
 
 layout = dbc.Container([
+    html.H3('Change takt time by tweaking these parameters: '),
+    takt_time_input,
     html.H1('Station Balancing page'),
     html.Div('enter the number of stations on the production line'),
     dcc.Input(id='nb_station_input', value=1, type='number',
