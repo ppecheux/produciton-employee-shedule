@@ -13,6 +13,7 @@ from views.functions_for_views.functions_for_callbacks import update_table_from_
 from views.functions_for_views.input_components import takt_time_input
 
 from algos.stations import assign_stations
+from algos.stations import activities_weighted_avg
 
 table_colums = {"product": "text", "activity_block_name": "text",
                 "activity_block_duration": "numeric", "fixed_station_nb": "numeric"}
@@ -35,6 +36,7 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
     # case we upload data
     return update_table_from_upload(contents, filename, table_colums)
 
+
 @app.callback(
     Output('table_nb_products', 'data'),
     [Input('table_initial_stations', 'data')],
@@ -53,6 +55,7 @@ def data_table_nb_products(table_initial_stations, table_nb_products):
         'quantity': [1]*len(df['product'].unique())
     })
     return df_nb_products.to_dict('records')
+
 
 @app.callback(
     Output('table_suggested_order_stations', 'data'),
@@ -74,7 +77,8 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
                 activities.append(row)
     except TypeError:
         raise PreventUpdate
-    suggested_stations = assign_stations(activities, table_nb_products, nb_stations)
+    suggested_stations = assign_stations(
+        activities, table_nb_products, nb_stations)
     if not suggested_stations:
         raise PreventUpdate
     return suggested_stations
@@ -84,11 +88,12 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
     Output('graph_suggested_order_stations', 'figure'),
     [Input('table_suggested_order_stations', 'data'),
      Input('input_shift_duration_hour', 'value'),
-     Input('input_operator_efficiency', 'value')],
+     Input('input_operator_efficiency', 'value'),
+     Input('table_nb_products', 'data')],
     [State('graph_suggested_order_stations', 'figure')]
 )
-def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_operator_efficiency, figure):
-    if not table_data:
+def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_operator_efficiency, table_nb_products, figure):
+    if not table_data or not table_nb_products:
         raise PreventUpdate
     df = pd.DataFrame.from_records(table_data)
     df.station_nb = pd.to_numeric(df.station_nb, errors='coerce')
@@ -96,23 +101,28 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     if not len(table_data_names):
         raise PreventUpdate
 
+    nb_unique_products = len(df['product'].unique())
     station_durations = {}
     for station in table_data_names:
         if not np.isnan(station):
             station_durations[int(station)] = df.loc[df.station_nb ==
-                                                     station, 'activity_block_duration'].sum()
+                                                     station, 'activity_block_duration'].sum()/nb_unique_products
     figure['data'] = [
         {
             'x': [nb],
             'y': [duration],
             'type': 'bar',
             'name': f'station {nb}'
-        } for nb, duration in station_durations.items()] + [
-        {'x': list(station_durations.keys()), 'y': [np.mean(
-            list(station_durations.values()))]*len(station_durations), 'name': 'average station duration'}
+        } for nb, duration in station_durations.items()
     ]+[
         {
-            'x': [name + 1 for name in range(len(table_data_names))],
+            'x': list(station_durations.keys()),
+            'y': [np.mean(list(station_durations.values()))]*len(station_durations),
+            'name': 'average station duration'
+        }
+    ]+[
+        {
+            'x': list(station_durations.keys()),
             'y': [input_shift_duration_hour*60*input_operator_efficiency/(len(table_data_names)*100)] * len(table_data_names),
             'name': 'takt time'
         }
@@ -126,7 +136,7 @@ layout = dbc.Container([
     takt_time_input,
     html.H1('Station Balancing page'),
     html.Div('enter the number of stations on the production line'),
-    dcc.Input(id='nb_station_input', value=1, type='number',
+    dcc.Input(id='nb_station_input', value=10, type='number',
               min=1, placeholder='number of stations'),
     html.Div('Enter the list of activities for the production'),
     dcc.Upload(id='upload_station_data',
@@ -161,7 +171,7 @@ layout = dbc.Container([
     dash_table.DataTable(
         id='table_nb_products',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
-                {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
+                 {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
         style_data_conditional=[{
             'if': {'column_id': 'product'},
             'backgroundColor': '#f8f8f8',
