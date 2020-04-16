@@ -16,6 +16,7 @@ import dash_table
 
 from algos.production_mix import merge_mix
 
+
 table_colums = {"name": "text", "time": "numeric", "quantity": "numeric"}
 
 
@@ -129,7 +130,7 @@ def figure_graph_suggested_order(table_data):
 
 
 layout = dbc.Container([
-    html.H1('List of product needed to be produced'),
+    html.H1('List of product needed to be produced',style={'color':'red'}),
     dcc.Upload(id='upload_mix_data',
                children=html.Div(
                    [
