@@ -113,7 +113,7 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 layout = dbc.Container([
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
-    html.H1('List of product needed to be produced'),
+    html.H1('List of product needed to be produced',style={'color':'red'}),
     dcc.Upload(
         id='upload_mix_data',
         children=html.Div(
