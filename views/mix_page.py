@@ -10,10 +10,18 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
+import base64
 from views.functions_for_views.functions_for_callbacks import update_table_from_upload
 from views.functions_for_views.input_components import takt_time_input
 
 from algos.production_mix import merge_mix
+external_stylesheets = ['testDash.css']
+image_filename = '1200px-DAF_logo.png' 
+image2_filename = '1200px-Logo_UTC_2018.png'
+image3_filename = 'logo-utfpr-png-1.png'
+encoded_image = base64.b64encode(open(image_filename, 'rb').read())
+encoded_image2 = base64.b64encode(open(image2_filename, 'rb').read())
+encoded_image3 = base64.b64encode(open(image3_filename, 'rb').read())
 
 table_colums = {"name": "text", "time": "numeric", "quantity": "numeric"}
 
@@ -110,7 +118,21 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     return figure
 
 
-layout = dbc.Container([
+layout = html.Div(id='homepage',children=[
+    #Div of the menu bar
+    html.Div(id='header',children=[
+    #List displayed horizontaly
+    html.Ul(id='navigation',children=[
+        html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode())),
+        html.Li(children=[ html.Button('Tutorial',id='tutorial_page')]),
+        html.Li(children=[html.Button('Operaçaões')]),
+        html.Li(children=[html.Button('Estações', id='station_mix')]),
+        html.Li(children=[ html.Button('Operadores', id='operators_mix')]),
+        html.Li(children=[ html.Button('Mix de Produçaõ', id='Production_mix')]),
+        html.Li(children=[ html.Button('Entrar',style={'border-radius':'40%','border':'2px solid red'}, id='entry')]),
+    ]),
+    ]),
+    html.Div(id='content',children=[
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
     html.H1('List of product needed to be produced',style={'color':'red'}),
@@ -164,4 +186,16 @@ layout = dbc.Container([
             }
         }
     )
+]),
+    html.Div(id='footer',children=[
+        html.Ul(id='bottom_page',children=[
+            html.Li('Software desenvolvido pela parceria :'),
+            html.Li(children=[
+                html.Img(src='data:image/png;base64,{}'.format(encoded_image2.decode())),
+                ]),
+            html.Li(children=[
+                html.Img(style={'width':'12%'},src='data:image/png;base64,{}'.format(encoded_image3.decode())),
+                ]),         
+        ]),
+    ]),
 ])
