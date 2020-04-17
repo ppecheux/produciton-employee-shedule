@@ -1,0 +1,181 @@
+html {
+ margin: 0;
+ padding: 0;
+ height: 100%;
+ }
+body {
+ background-color: white; 
+ font-family: Verdana, sans-serif; 
+ font-size: 100%;
+ margin:0px;
+ }
+
+img {
+  border: 0px solid #ddd;
+  border-radius: 0px;
+  padding: 5px;
+  width: 150px;
+
+}
+#text {
+  color: black;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-family: OCR A Std, monospace;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+#overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: RGB(161,179,246);
+}
+#container {
+  position: relative;
+  width: 11%;
+}
+
+#container:hover #overlay {
+  opacity: 1;
+}
+
+#header {
+  height: 10%;
+  top:0px;
+  position: fixed;
+  background: linear-gradient(to right, white, RGB(161,179,246) );
+  opacity: 100%;
+  z-index: 2;
+}
+#content{
+  height: 90%;
+  background-position: bottom;
+  z-index: 1;
+}
+
+#footer{
+background:none;
+position:absolute;
+right:0;
+width:60%;
+padding-top:50px;
+height:50px;
+}
+
+#navigation ul{
+  margin-top:10px;
+	height: 100%;
+	width: 100%
+}
+
+ #navigation {
+  margin: 0 ;
+  padding: 0 ;
+  list-style: none ;
+  text-align: left ;
+}
+
+/*Ici c'est pour modifier le cadre des boutons*/
+#navigation li {
+  height: 100%;
+  width: 100%;
+	padding: 10px 30px ;
+  display: inline ;
+  margin-right: 1px ;
+  background: none ;
+  border: none;
+  line-height: 1em ;
+  text-align: center ;
+  text-decoration: none ;
+}
+
+
+/* Ici c'est pour modifier les boutons */
+li button{
+	color:black;
+  border:none;
+  background-color: transparent;
+  font-family: OCR A Std, monospace;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 12px 12px;
+}
+li button:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+
+#bottom_page {
+  margin: 0 ;
+  padding: 0 ;
+  list-style: none ;
+  text-align: left ;
+  display: inline ;
+}
+
+#navigation ul{
+  margin-top:10px;
+  height: 100%;
+  width: 100%;
+  display: inline ;
+}
+#bottom_page li {
+  height: 100%;
+  width: 100%;
+  padding: 10px 30px ;
+  display: inline ;
+  margin-right: 1px ;
+  background: none ;
+  border: none;
+  text-align: center ;
+  text-decoration: none ;
+}
+
+
+
+/*Ici c'est pour modifier le Titre "Daf"*/
+h1 {
+ font-size: 300%; 
+ color: navy; 
+ text-align: center;
+ display:inline-block;
+ width: 10%;
+ height: 45px;
+ line-height: : 45px;
+ border-width: : 4px;
+ border-style: : double;
+ border-radius: 0px;
+ text-align: center;
+ margin: 10px;
+ }
+h2 {
+ font-size: 150%; 
+ color: red; 
+ padding-left: 15px;
+ }
+p,ul,td {
+ color: black; 
+ }
+a:link {
+ color: green;
+ text-decoration: underline;
+ }
+a:visited {
+ color: gray;
+ }
+a:hover {
+ color: red;
+ text-decoration: none;
+}
+a:active, a:focus {
+ color: red;
+}
