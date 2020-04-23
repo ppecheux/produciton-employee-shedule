@@ -10,8 +10,9 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
 from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products
-
 from views.functions_for_views.input_components import takt_time_input
+
+from algos.employee_tasks import assign_employee
 table_input_colums = {"product": "text", "activity_block_name": "text",
                 "activity_block_duration": "numeric", "station": "numeric"}
 
@@ -40,6 +41,31 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
 def data_table_nb_products_operator(table_initial_operators, table_nb_products_operator):
     return data_table_nb_products(table_initial_operators, table_nb_products_operator)
 
+
+@app.callback(
+    Output('table_suggested_operator', 'data'),
+    [Input('table_initial_operators', 'data'),
+     Input('table_nb_products_operator', 'data')]
+)
+def data_table_suggested_order(init_data, table_nb_products):
+    if not init_data or not table_nb_products:
+        raise PreventUpdate
+    # create a list of time needed for each product
+    try:
+        activities = []
+        for row in init_data:
+            if '' not in (row['product'], row['activity_block_name'], row['activity_block_duration'], row['station']):
+                row['activity_block_duration'] = float(
+                    row['activity_block_duration'])
+                row['station'] = int(row['station'])
+                activities.append(row)
+    except TypeError:
+        raise PreventUpdate
+    suggested_operators = assign_employee(
+        activities, table_nb_products)
+    if not suggested_operators:
+        raise PreventUpdate
+    return suggested_operators
 
 @app.callback(
     Output('graph_suggested_operators', 'figure'),

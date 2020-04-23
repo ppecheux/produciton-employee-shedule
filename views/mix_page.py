@@ -16,7 +16,7 @@ from views.functions_for_views.input_components import takt_time_input
 
 from algos.production_mix import merge_mix
 external_stylesheets = ['testDash.css']
-image_filename = '1200px-DAF_logo.png' 
+image_filename = '1200px-DAF_logo.png'
 image2_filename = '1200px-Logo_UTC_2018.png'
 image3_filename = 'logo-utfpr-png-1.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
@@ -45,6 +45,7 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_
     print('upload')
     # case we upload data
     return update_table_from_upload(contents, filename, table_colums)
+
 
 @app.callback(
     Output('table_suggested_order', 'data'),
@@ -118,60 +119,61 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     return figure
 
 
-layout =dbc.Container([
- html.Div(id='content',children=[
-    html.H3('Change takt time by tweaking these parameters: '),
-    takt_time_input,
-    html.H1('List of product needed to be produced',style={'color':'navy'}),
-    dcc.Upload(
-        id='upload_mix_data',
-        children=html.Div(
-            [
-                'Drag and Drop or ',
-                html.A('Select File'),
-                ' (csv or xls) \n must have name, time and quantity columns'
-            ]
+layout = dbc.Container([
+    html.Div(id='content', children=[
+        html.H3('Change takt time by tweaking these parameters: '),
+        takt_time_input,
+        html.H1('List of product needed to be produced',
+                style={'color': 'navy'}),
+        dcc.Upload(
+            id='upload_mix_data',
+            children=html.Div(
+                [
+                    'Drag and Drop or ',
+                    html.A('Select File'),
+                    ' (csv or xls) \n must have name, time and quantity columns'
+                ]
+            ),
+            style={
+                'width': '100%',
+                'height': '60px',
+                'lineHeight': '60px',
+                'borderWidth': '1px',
+                'borderStyle': 'dashed',
+                'borderRadius': '5px',
+                'textAlign': 'center',
+                'margin': '10px'
+            },
         ),
-        style={
-            'width': '100%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
-        },
-    ),
-    dash_table.DataTable(
-        id='table_initial_quantity_time',
-        columns=[{'id': name, 'name': name, 'type': type}
-                 for name, type in table_colums.items()],
-        data=[],
-        editable=True,
-        row_deletable=True
-    ),
-    html.Button('Add row', id='add_button'),
-    html.H1('Suggested order of products on the production line'),
-    dash_table.DataTable(
-        id='table_suggested_order',
-        columns=[
-            {'id': 'name', 'name': 'name'},
-            {'id': 'time', 'name': 'time'},
-            {'id': 'cumulated_time', 'name': 'cumulated_time'}
-        ],
-        export_format='csv',
-        export_headers='names'
-    ),
-    dcc.Graph(
-        id='graph_suggested_order',
-        figure={
-            'layout': {
-                'title': 'order of production visualization',
-                'xaxis': {'title': 'rank on the production line'},
-                'yaxis': {'title': 'production time'}
+        dash_table.DataTable(
+            id='table_initial_quantity_time',
+            columns=[{'id': name, 'name': name, 'type': type}
+                     for name, type in table_colums.items()],
+            data=[],
+            editable=True,
+            row_deletable=True
+        ),
+        html.Button('Add row', id='add_button'),
+        html.H1('Suggested order of products on the production line'),
+        dash_table.DataTable(
+            id='table_suggested_order',
+            columns=[
+                {'id': 'name', 'name': 'name'},
+                {'id': 'time', 'name': 'time'},
+                {'id': 'cumulated_time', 'name': 'cumulated_time'}
+            ],
+            export_format='csv',
+            export_headers='names'
+        ),
+        dcc.Graph(
+            id='graph_suggested_order',
+            figure={
+                'layout': {
+                    'title': 'order of production visualization',
+                    'xaxis': {'title': 'rank on the production line'},
+                    'yaxis': {'title': 'production time'}
+                }
             }
-        }
-    )
-]),
-    ])
+        )
+    ]),
+])
