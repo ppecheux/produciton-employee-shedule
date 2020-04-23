@@ -17,6 +17,11 @@ img {
   width: 150px;
 
 }
+
+#pageContent{
+
+  height: 90%;
+}
 #text {
   color: black;
   font-size: 20px;
@@ -48,18 +53,21 @@ img {
   opacity: 1;
 }
 
-#header {
+#homepage #header {
   height: 10%;
+  width: 100%;
   top:0px;
   position: fixed;
   background: linear-gradient(to right, white, RGB(161,179,246) );
   opacity: 100%;
   z-index: 2;
 }
-#content{
-  height: 90%;
-  background-position: bottom;
-  z-index: 1;
+#homepage #content{
+  margin:auto;
+  float:bottom;
+  width:100%;
+  height: 60%;
+
 }
 
 #footer{
@@ -88,7 +96,7 @@ height:50px;
 #navigation li {
   height: 100%;
   width: 100%;
-	padding: 10px 30px ;
+	padding: 10px 40px ;
   display: inline ;
   margin-right: 1px ;
   background: none ;
@@ -110,6 +118,38 @@ li button{
   padding: 12px 12px;
 }
 li button:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+li a:link {
+  color:black;
+  border:none;
+  text-decoration: none;
+  background-color: transparent;
+  font-family: OCR A Std, monospace;
+  font-weight: bold;
+  font-size: 25px;
+  padding: 20px 20px;
+  text-decoration:none;
+}
+li a:visited{
+  text-decoration:none;
+   color:black;
+  border:none;
+  text-decoration: none;
+  background-color: transparent;
+  font-family: OCR A Std, monospace;
+  font-weight: bold;
+  font-size: 25px;
+  padding: 20px 20px;
+}
+
+li a:active{
+color:navy;
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+li a:hover {
+  color:navy;
   box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 

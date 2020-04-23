@@ -118,24 +118,11 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     return figure
 
 
-layout = html.Div(id='homepage',children=[
-    #Div of the menu bar
-    html.Div(id='header',children=[
-    #List displayed horizontaly
-    html.Ul(id='navigation',children=[
-        html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode())),
-        html.Li(children=[ html.Button('Tutorial',id='tutorial_page')]),
-        html.Li(children=[html.Button('Operaçaões')]),
-        html.Li(children=[html.Button('Estações', id='station_mix')]),
-        html.Li(children=[ html.Button('Operadores', id='operators_mix')]),
-        html.Li(children=[ html.Button('Mix de Produçaõ', id='Production_mix')]),
-        html.Li(children=[ html.Button('Entrar',style={'border-radius':'40%','border':'2px solid red'}, id='entry')]),
-    ]),
-    ]),
-    html.Div(id='content',children=[
+layout =dbc.Container([
+ html.Div(id='content',children=[
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
-    html.H1('List of product needed to be produced',style={'color':'red'}),
+    html.H1('List of product needed to be produced',style={'color':'navy'}),
     dcc.Upload(
         id='upload_mix_data',
         children=html.Div(
@@ -187,15 +174,4 @@ layout = html.Div(id='homepage',children=[
         }
     )
 ]),
-    html.Div(id='footer',children=[
-        html.Ul(id='bottom_page',children=[
-            html.Li('Software desenvolvido pela parceria :'),
-            html.Li(children=[
-                html.Img(src='data:image/png;base64,{}'.format(encoded_image2.decode())),
-                ]),
-            html.Li(children=[
-                html.Img(style={'width':'12%'},src='data:image/png;base64,{}'.format(encoded_image3.decode())),
-                ]),         
-        ]),
-    ]),
-])
+    ])
