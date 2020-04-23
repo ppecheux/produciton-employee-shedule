@@ -12,21 +12,21 @@ from views import mix_page, station_page, operator_page
 from datetime import datetime as dt
 import sys
 
-dashboard_pages = {'/mix': mix_page, '/station': station_page, '/operator': operator_page}
+dashboard_pages = {'/mix': mix_page,
+                   '/station': station_page, '/operator': operator_page}
 app.layout = html.Div([
     dcc.Location(id='url'),
     html.Div([
-        dbc.NavbarSimple(id='navBar',
-                          children=[],
-                          sticky='top',
-                          dark=False,
-                          fluid=True,
-                          ),
+        # dbc.Navbar(id='navBar',
+        #            children=[],
+        #            # sticky='top',
+        #            dark=False,
+        #            # fluid=True, 
+        #            ),
         html.Div(id='pageContent'),
-        
+
     ], id='table-wrapper')
 ])
-
 
 
 @app.callback(Output('pageContent', 'children'),
@@ -75,16 +75,26 @@ def displayPage(pathname):
         print(f'path error {pathname}')
     return layout
 
+
 @app.callback(
     Output('navBar', 'children'),
     [Input('pageContent', 'children')])
 def navBar_children(input1):
+
+    DAF_LOGO = "https://upload.wikimedia.org/wikipedia/commons/1/12/DAF_logo.svg"
     DashboardNavItems = [
-        dbc.NavItem(dbc.NavLink(href.replace('/', '').title().replace('_', ' ').capitalize(),
-                                href=href))
-        for href in dashboard_pages.keys()
+        html.A(dbc.Col(html.Img(src=DAF_LOGO, height="30px")),
+               href="https://daf.com"),
+        dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink(href.replace('/', '').title().replace('_', ' ').capitalize(),
+                                        href=href))
+                for href in dashboard_pages.keys()
+            ],
+            justified=True)
     ]
     return DashboardNavItems
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
