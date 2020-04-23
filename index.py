@@ -13,33 +13,17 @@ from views import mix_page, station_page, operator_page
 from datetime import datetime as dt
 import sys
 
-dashboard_pages = {'/mix': mix_page,'/station': station_page, '/operator': operator_page}
-app.layout = html.Div([
-    dcc.Location(id='url'),
-    html.Div(id='homepage',children=[
-        NavBar
-        ]),
-        html.Div(id='pageContent'),
-
 dashboard_pages = {'/mix': mix_page,
                    '/station': station_page, '/operator': operator_page}
 app.layout = html.Div([
     dcc.Location(id='url'),
-    html.Div([
-        # dbc.Navbar(id='navBar',
-        #            children=[],
-        #            # sticky='top',
-        #            dark=False,
-        #            # fluid=True, 
-        #            ),
-        html.Div(id='pageContent'),
+    html.Div(id='homepage', children=[
+        NavBar
+    ]),
+    html.Div(id='pageContent'),
 
-    ], id='table-wrapper')
+    Footer
 ])
->>>>>>> 2fb52a143cf5d7f2d0910428a03ab804a976e75b
-
-        Footer
-    ])
 
 @app.callback(Output('pageContent', 'children'),
               [Input('url', 'pathname')])
