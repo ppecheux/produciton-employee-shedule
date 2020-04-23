@@ -40,6 +40,54 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
 def data_table_nb_products_operator(table_initial_operators, table_nb_products_operator):
     return data_table_nb_products(table_initial_operators, table_nb_products_operator)
 
+
+@app.callback(
+    Output('graph_suggested_operators', 'figure'),
+    [Input('table_suggested_operator', 'data'),
+     Input('input_shift_duration_hour', 'value'),
+     Input('input_operator_efficiency', 'value'),
+     Input('table_nb_products_operator', 'data')],
+    [State('graph_suggested_operators', 'figure')]
+)
+def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_operator_efficiency, table_nb_products, figure):
+    if not table_data or not table_nb_products:
+        raise PreventUpdate
+    df = pd.DataFrame.from_records(table_data)
+    df.station_nb = pd.to_numeric(df.station_nb, errors='coerce')
+    table_data_names = df.station_nb[~np.isnan(df.station_nb)].unique()
+    if not len(table_data_names):
+        raise PreventUpdate
+
+    nb_unique_products = len(df['product'].unique())
+    station_durations = {}
+    for station in table_data_names:
+        if not np.isnan(station):
+            station_durations[int(station)] = df.loc[df.station_nb ==
+                                                     station, 'activity_block_duration'].sum()/nb_unique_products
+    figure['data'] = [
+        {
+            'x': [nb],
+            'y': [duration],
+            'type': 'bar',
+            'name': f'station {nb}'
+        } for nb, duration in station_durations.items()
+    ]+[
+        {
+            'x': list(station_durations.keys()),
+            'y': [np.mean(list(station_durations.values()))]*len(station_durations),
+            'name': 'average station duration'
+        }
+    ]+[
+        {
+            'x': list(station_durations.keys()),
+            'y': [input_shift_duration_hour*60*input_operator_efficiency/(len(table_data_names)*100)] * len(table_data_names),
+            'name': 'takt time'
+        }
+    ]
+
+    return figure
+
+
 layout = dbc.Container([
     html.H1('Operator scheduling page'),
     takt_time_input,
