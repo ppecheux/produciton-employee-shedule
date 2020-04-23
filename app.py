@@ -5,8 +5,9 @@ import os
 from flask_login import LoginManager, UserMixin
 from users_mgt import db, User as base
 from config import config
+import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 app.config.suppress_callback_exceptions = True
 
