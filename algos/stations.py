@@ -7,9 +7,18 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 	if df.empty:
 		return []
 	
-	#begin algo
 	df_weighted_avg = activities_weighted_avg(df, pd.DataFrame.from_records(products))
 
+	df_weighted_avg = assign_stations_for_avg(df_weighted_avg, nb_stations)
+
+	df = df.join(df_weighted_avg, on='activity_block_name')
+	
+	df = df[['product', 'activity_block_name', 'activity_block_duration', 'station_nb']]
+
+	activities = df.to_dict('rows')
+	return activities
+	
+def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> pd.DataFrame:
 	df_weighted_avg['station_nb'] = [np.nan] * len(df_weighted_avg)
 
 	#compute time per station:
@@ -35,16 +44,7 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
 
 		df_weighted_avg.loc[activity, "station_nb"] = station_nb
 		rest_production_duration -= df_weighted_avg.loc[activity, 'weighted_average']
-
-
-	df = df.join(df_weighted_avg, on='activity_block_name')
-	#end algo
-	
-	df = df[['product', 'activity_block_name', 'activity_block_duration', 'station_nb']]
-
-	activities = df.to_dict('rows')
-	return activities
-	
+	return df_weighted_avg	
 
 def activities_weighted_avg(df_activities, df_products) -> pd.DataFrame:
 	df_products = df_products.groupby(['product']).sum()

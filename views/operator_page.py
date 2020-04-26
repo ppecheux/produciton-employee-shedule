@@ -45,9 +45,10 @@ def data_table_nb_products_operator(table_initial_operators, table_nb_products_o
 @app.callback(
     Output('table_suggested_operator', 'data'),
     [Input('table_initial_operators', 'data'),
-     Input('table_nb_products_operator', 'data')]
+     Input('table_nb_products_operator', 'data'),
+     Input('input_shift_duration_hour', 'value')]
 )
-def data_table_suggested_order(init_data, table_nb_products):
+def data_table_suggested_order(init_data, table_nb_products, input_shift_duration_hour):
     if not init_data or not table_nb_products:
         raise PreventUpdate
     # create a list of time needed for each product
@@ -62,7 +63,7 @@ def data_table_suggested_order(init_data, table_nb_products):
     except TypeError:
         raise PreventUpdate
     suggested_operators = assign_employee(
-        activities, table_nb_products)
+        activities, table_nb_products, input_shift_duration_hour)
     if not suggested_operators:
         raise PreventUpdate
     return suggested_operators
