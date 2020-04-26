@@ -46,9 +46,10 @@ def data_table_nb_products_operator(table_initial_operators, table_nb_products_o
     Output('table_suggested_operator', 'data'),
     [Input('table_initial_operators', 'data'),
      Input('table_nb_products_operator', 'data'),
-     Input('input_shift_duration_hour', 'value')]
+     Input('input_shift_duration_hour', 'value'),
+     Input('input_operator_efficiency', 'value')]
 )
-def data_table_suggested_order(init_data, table_nb_products, input_shift_duration_hour):
+def data_table_suggested_order(init_data, table_nb_products, input_shift_duration_hour, input_operator_efficiency):
     if not init_data or not table_nb_products:
         raise PreventUpdate
     # create a list of time needed for each product
@@ -63,7 +64,7 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
     except TypeError:
         raise PreventUpdate
     suggested_operators = assign_employee(
-        activities, table_nb_products, input_shift_duration_hour)
+        activities, table_nb_products, int(input_shift_duration_hour), float(input_operator_efficiency))
     if not suggested_operators:
         raise PreventUpdate
     return suggested_operators
