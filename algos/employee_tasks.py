@@ -26,12 +26,12 @@ def assign_employee(activities: list, table_nb_products: list, input_shift_durat
     while nb_operators > 1:
         nb_operators -= 1
         possible = assign_employees_like_stations()
-        if possible.empty:
+        if not possible:
             break
         df_operators = possible
 
     if (nb_stations+1)//2 - 1 == nb_operators:
-        df_operators = assign_employee_every_two_stations()
+        df_operators = assign_employee_every_two_stations(df_stations_activities)
 
     df = df.merge(df_operators, how='left',
                   left_index=True, suffixes=('', '_op'))
@@ -39,8 +39,35 @@ def assign_employee(activities: list, table_nb_products: list, input_shift_durat
     return activities
 
 
-def assign_employees_like_stations():
-    return pd.DataFrame()
+def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_operators: int, shift_duration:int, efficiency: float) -> pd.DataFrame:
+    df_stations_activities['operator_nb'] = [np.nan] * len(df_stations_activities)
+    
+
+    cumulated_duration = 0
+    rest_production_duration = df_stations_activities['weighted_average'].sum()
+    duration_operator = shift_duration*efficiency
+    total_working_duration = duration_operator*nb_operators
+    if rest_production_duration > total_working_duration:
+        return None
+
+    operator_nb = 0
+
+    for activity in df_stations_activities.index:
+        cumulated_duration += df_stations_activities.loc[activity, 'weighted_average']
+        if cumulated_duration > duration_operator:
+            cumulated_duration = df_stations_activities.loc[activity, 'weighted_average']
+            operator_nb += 1
+            nb_operators -= 1
+        print(type(rest_production_duration))
+        print(f'my duration {rest_production_duration}')
+        print(df_stations_activities)
+        rest_production_duration -= df_stations_activities.loc[activity, 'weighted_average']
+        df_stations_activities.loc[activity, 'operator_nb'] = operator_nb
+    df_stations_activities['operator_nb'] = df_stations_activities['operator_nb'].astype(int)
+    if 0 > nb_operators:
+        return None
+    else:
+        return df_stations_activities
 
 
 def assign_employee_every_two_stations(df_stations_activities: pd.DataFrame) -> pd.DataFrame:
