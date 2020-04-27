@@ -5,7 +5,7 @@ import unittest
 import pandas as pd
 import numpy as np
 from algos.employee_tasks import assign_employee, assign_employee_every_two_stations
-
+from algos.employee_tasks import assign_employees_like_stations
 class TestAssignStations(unittest.TestCase):
 
     def __init__(self, methodName):
@@ -34,18 +34,35 @@ class TestAssignStations(unittest.TestCase):
 
     def test_assign_employee_every_two_stations(self):
         df_stations_activities = pd.DataFrame({
-            "activity_block_name": ["activity1", "activity2", "activity1", "activity2"],
+            "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
             "station_nb": [i for i in range(4)],
         }).set_index('activity_block_name')
 
         expected = pd.DataFrame({
-            "activity_block_name": ["activity1", "activity2", "activity1", "activity2"],
+            "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
             "station_nb": list(range(4)),
             'employee_nb': [0,0,1,1]
         }).set_index('activity_block_name')
         result = assign_employee_every_two_stations(df_stations_activities)
         self.assertTrue(result.equals(expected))
 
+    def test_assign_employees_like_stations(self):
+        df_stations_activities = pd.DataFrame({
+            "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
+            'weighted_average': [6]*4,
+            "station_nb": [i for i in range(4)],
+        }).set_index('activity_block_name')
+
+        expected = pd.DataFrame({
+            "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
+            'weighted_average': [6]*4,
+            "station_nb": [i for i in range(4)],
+            'operator_nb': [0,1,2,3]
+        }).set_index('activity_block_name')
+
+        result = assign_employees_like_stations(df_stations_activities, 4, 7, 1)
+        print(result)
+        self.assertTrue(result.equals(expected))
 
 if __name__ == "__main__":
     unittest.main()
