@@ -55,6 +55,7 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
 
     operator_nb = 0
     working_on_stations = set()
+    df_stations_activities.sort_index(inplace=True)
     working_on_stations.add(df_stations_activities['station_nb'].iloc[0])
     for activity in df_stations_activities.index:
         cummulated_duration_on_middle_of_activity = cumulated_duration + df_stations_activities.loc[activity,'daily_duration']/2
