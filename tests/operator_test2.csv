@@ -1,0 +1,5 @@
+product,activity_block_name,activity_block_duration,station_nb
+"cabine type 1",motor, 2 min,1
+"cabine type 1",door left,5 min,2
+"cabine type 1",door right,3 min,3
+"cabine type 1",lights,1 min,3

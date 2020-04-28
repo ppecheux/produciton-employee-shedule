@@ -14,7 +14,7 @@ from views.functions_for_views.input_components import takt_time_input
 
 from algos.employee_tasks import assign_employee
 table_input_colums = {"product": "text", "activity_block_name": "text",
-                "activity_block_duration": "numeric", "station_nb": "numeric"}
+                "activity_block_duration": "text", "station_nb": "numeric"}
 
 @app.callback([Output('table_initial_operators', 'columns'),
                Output('table_initial_operators', 'data')],
@@ -34,42 +34,54 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
     return update_table_from_upload(contents, filename, table_input_colums)
 
 @app.callback(
+    Output('table_suggested_operator', 'data'),
+    [Input('table_initial_operators', 'data'), #TODO does not trigger !
+     Input('table_nb_products_operator', 'data'),
+     Input('input_shift_duration_hour', 'value'),
+     Input('input_operator_efficiency', 'value')],
+)
+def data_table_suggested_order(init_data, table_nb_products, input_shift_duration_hour, input_operator_efficiency):
+    print('in suggestion')    
+    if not init_data or not table_nb_products:
+        raise PreventUpdate
+    # create a list of time needed for each product
+    df_activities = pd.DataFrame.from_records(init_data)
+    df_activities.replace('', np.nan, inplace=True)
+    df_activities.dropna(inplace=True)
+    try:
+        df_activities = df_activities.astype({"station_nb": int})
+    except ValueError:
+        print('the stations are not int')
+        raise PreventUpdate
+
+    try:
+        df_activities = df_activities.astype({"activity_block_duration": float})
+    except ValueError:
+        try:
+            df_activities['activity_block_duration'] = pd.to_timedelta(df_activities.activity_block_duration)
+        except ValueError:
+            print("echec de conversion des durées")
+            raise PreventUpdate
+
+    activities = df_activities.to_records()
+    suggested_operators = assign_employee(
+        activities, table_nb_products, int(input_shift_duration_hour), float(input_operator_efficiency))
+    df_suggested = pd.DataFrame.from_dict(suggested_operators)
+    if not suggested_operators:
+        raise PreventUpdate
+    if isinstance(df_suggested['activity_block_duration'].iloc[0], pd.Timedelta):
+        df_suggested['activity_block_duration'] /= pd.Timedelta(minutes=1)
+    suggested_operators = df_suggested.to_dict('rows')
+    return suggested_operators
+
+@app.callback(
     Output('table_nb_products_operator', 'data'),
     [Input('table_initial_operators', 'data')],
     [State('table_nb_products_operator', 'data')]
 )
 def data_table_nb_products_operator(table_initial_operators, table_nb_products_operator):
+    print('in quantity')
     return data_table_nb_products(table_initial_operators, table_nb_products_operator)
-
-
-@app.callback(
-    Output('table_suggested_operator', 'data'),
-    [Input('table_initial_operators', 'data'),
-     Input('table_nb_products_operator', 'data'),
-     Input('input_shift_duration_hour', 'value'),
-     Input('input_operator_efficiency', 'value')]
-)
-def data_table_suggested_order(init_data, table_nb_products, input_shift_duration_hour, input_operator_efficiency):
-    if not init_data or not table_nb_products:
-        raise PreventUpdate
-    # create a list of time needed for each product
-    try:
-        activities = []
-        for row in init_data:
-            if '' not in (row['product'], row['activity_block_name'], row['activity_block_duration'], row['station_nb']):
-                row['activity_block_duration'] = float(
-                    row['activity_block_duration'])
-                row['station_nb'] = int(row['station_nb'])
-                activities.append(row)
-    except TypeError:
-        raise PreventUpdate
-    print(pd.DataFrame.from_records(activities))
-    suggested_operators = assign_employee(
-        activities, table_nb_products, int(input_shift_duration_hour), float(input_operator_efficiency))
-    print(pd.DataFrame.from_dict(suggested_operators))
-    if not suggested_operators:
-        raise PreventUpdate
-    return suggested_operators
 
 @app.callback(
     Output('graph_suggested_operators', 'figure'),
@@ -105,13 +117,13 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
         {
             'x': list(station_durations.keys()),
             'y': [np.mean(list(station_durations.values()))]*len(station_durations),
-            'name': 'average station duration'
+            'name': 'average operator work duration'
         }
     ]+[
         {
             'x': list(station_durations.keys()),
-            'y': [input_shift_duration_hour*60*input_operator_efficiency/(len(table_data_names)*100)] * len(table_data_names),
-            'name': 'takt time'
+            'y': [input_shift_duration_hour*60*input_operator_efficiency/100] * len(table_data_names),
+            'name': 'target work duration'
         }
     ]
 
@@ -175,9 +187,9 @@ layout = html.Div(id='pageContent',children=[
         id='graph_suggested_operators',
         figure={
             'layout': {
-                'title': 'workload on operators',
+                'title': 'total work duration in a day',
                 'xaxis': {'title': 'operator number'},
-                'yaxis': {'title': 'operator duration'}
+                'yaxis': {'title': 'operator duration in minutes'}
             }
         }
     )
