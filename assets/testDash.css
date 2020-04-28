@@ -19,8 +19,12 @@ img {
 }
 
 #pageContent{
-
-  height: 90%;
+  margin-right: 5%;
+  width: 90%;
+  margin-left: 5%;
+  height: 80%;
+  margin-top: 10%;
+  text-align: center;
 }
 #text {
   color: black;
@@ -185,16 +189,13 @@ li a:hover {
 /*Ici c'est pour modifier le Titre "Daf"*/
 h1 {
  font-size: 300%; 
- color: navy; 
+ color: black; 
  text-align: center;
  display:inline-block;
- width: 10%;
- height: 45px;
  line-height: : 45px;
  border-width: : 4px;
  border-style: : double;
  border-radius: 0px;
- text-align: center;
  margin: 10px;
  }
 h2 {

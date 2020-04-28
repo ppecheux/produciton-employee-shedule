@@ -116,7 +116,7 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     return figure
 
 
-layout = dbc.Container([
+layout = html.Div(id='pageContent',children=[
     html.H1('Operator scheduling page'),
     takt_time_input,
     html.Div('Enter the list of activities for the production'),
