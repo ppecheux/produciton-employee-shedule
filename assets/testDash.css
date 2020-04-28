@@ -30,6 +30,7 @@ hr{
   width: 100%;
   size:2;
   color:pink;
+  margin-top: 100px;
 
 }
 
@@ -211,8 +212,20 @@ h1 {
  border-width: : 4px;
  border-style: : double;
  border-radius: 0px;
- margin: 10px;
+ margin-top:0px;
+ margin-bottom: 30px;
  }
+
+ h3 {
+ font-size: 200%; 
+ color: black; 
+ text-align: center;
+ display:inline-block;
+ font-style: italic;
+ margin-top:0px;
+ margin-bottom: 30px;
+ }
+
 h2 {
  font-size: 150%; 
  color: red; 

@@ -122,7 +122,7 @@ layout = html.Div(id='pageContent',children=[
     html.H1('Operator scheduling page'),
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
-    html.Hr(id="horizontalLine",style={'width': '100%','size':'2', 'color':'pink'}),
+    html.Hr(id="horizontalLine"),
     html.Div(id='instructions',children=['Enter the list of activities for the production']),
     dcc.Upload(id='upload_operator_data',
                children=html.Div(
@@ -135,14 +135,16 @@ layout = html.Div(id='pageContent',children=[
                style={
                    'width': '100%',
                    'height': '60px',
-                   'lineHeight': '60px',
+                   'lineHeight': '30px',
                    'borderWidth': '1px',
                    'borderStyle': 'dashed',
                    'borderRadius': '5px',
                    'textAlign': 'center',
-                   'margin': '10px'
+                   'margin-bottom': '50px'
                },
                ),
+    html.H3('OR'),
+
     dash_table.DataTable(
         id='table_initial_operators',
         columns=[{'id': name, 'name': name, 'type': type}
@@ -152,7 +154,7 @@ layout = html.Div(id='pageContent',children=[
         row_deletable=True
     ),
     html.Button('Add row', id='add_operator_row'),
-    html.Hr(id="horizontalLine",style={'width': '100%','size':'2', 'color':'pink'}),
+    html.Hr(id="horizontalLine"),
     html.Div(id='instructions',children=['Enter the quantity of product needed to be produced']),
     dash_table.DataTable(
         id='table_nb_products_operator',
@@ -163,7 +165,7 @@ layout = html.Div(id='pageContent',children=[
             'backgroundColor': '#f8f8f8',
         }]
     ),
-    html.Hr(id="horizontalLine",style={'width': '100%','size':'2', 'color':'pink'}),
+    html.Hr(id="horizontalLine"),
     html.H3('Suggested activities for the operators'),
     dash_table.DataTable(
         id='table_suggested_operator',
