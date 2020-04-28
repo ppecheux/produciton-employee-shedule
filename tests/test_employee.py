@@ -79,7 +79,6 @@ class TestAssignStations(unittest.TestCase):
         }).set_index('activity_block_name')
 
         result = assign_employees_like_stations(df_stations_activities, 2, 7, 1)
-        print(result)
 
         self.assertTrue(result.equals(expected))
 

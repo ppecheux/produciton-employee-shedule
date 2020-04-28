@@ -26,11 +26,6 @@ def assign_employee(activities: list, table_nb_products: list, input_shift_durat
                                                   nb_operators, input_shift_duration_hour, input_operator_efficiency)
         nb_operators += 1
     df_operators = solution
-
-    # if (nb_stations+1)//2 + 1 == nb_operators:
-    #     df_operators = assign_employee_every_two_stations(
-    #         df_stations_activities)
-
     df = df[["product", "activity_block_name", "activity_block_duration", "station_nb"]].merge(df_operators['operator_nb'], how='left',
                                                                                                right_index=True, left_on='activity_block_name')
 
@@ -44,8 +39,6 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
     rest_production_duration = df_stations_activities['weighted_average'].sum()
     duration_operator = shift_duration*efficiency
     total_working_duration = duration_operator*nb_operators
-    print(rest_production_duration)
-    print(total_working_duration)
     if rest_production_duration > total_working_duration:
         return None
 
@@ -57,7 +50,6 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
     cumulated_duration = 0
     working_on_stations = set()
     working_on_stations.add(df_stations_activities['station_nb'].iloc[0])
-    print(working_on_stations)
     for activity in df_stations_activities.index:
         cummulated_duration_on_middle_of_activity = cumulated_duration + df_stations_activities.loc[activity,'weighted_average']/2
         cumulated_duration += df_stations_activities.loc[activity,'weighted_average']
