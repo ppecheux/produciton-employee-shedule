@@ -15,8 +15,8 @@ def assign_employee(activities: list, table_nb_products: list, input_shift_durat
 
     df_stations_activities = df[['station_nb', 'activity_block_name']].groupby(
         ['activity_block_name']).last()
-    df_stations_activities = df_weighted_avg.join(
-        df_stations_activities)
+    df_stations_activities = df_weighted_avg.join(df_stations_activities)
+    df_stations_activities['daily_duration'] = df_stations_activities['weighted_average'] * df_products['quantity'].sum()
 
     nb_stations = df_stations_activities['station_nb'].nunique()
     nb_operators = (nb_stations+1)//2
@@ -36,9 +36,16 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
     df_stations_activities['operator_nb'] = [
         np.nan] * len(df_stations_activities)
 
-    rest_production_duration = df_stations_activities['weighted_average'].sum()
+    cumulated_duration = 0
+    if isinstance(df_stations_activities["daily_duration"].iloc[0], pd.Timedelta):      
+        cumulated_duration = pd.Timedelta('0 days')
+        if not isinstance(shift_duration, np.timedelta64):
+            shift_duration = pd.Timedelta(hours=shift_duration)
+
+    rest_production_duration = df_stations_activities['daily_duration'].sum()
     duration_operator = shift_duration*efficiency
     total_working_duration = duration_operator*nb_operators
+    
     if rest_production_duration > total_working_duration:
         return None
 
@@ -47,17 +54,17 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
         duration_operator, rest_production_duration/rest_nb_operators)
 
     operator_nb = 0
-    cumulated_duration = 0
     working_on_stations = set()
+    df_stations_activities.sort_index(inplace=True)
     working_on_stations.add(df_stations_activities['station_nb'].iloc[0])
     for activity in df_stations_activities.index:
-        cummulated_duration_on_middle_of_activity = cumulated_duration + df_stations_activities.loc[activity,'weighted_average']/2
-        cumulated_duration += df_stations_activities.loc[activity,'weighted_average']
+        cummulated_duration_on_middle_of_activity = cumulated_duration + df_stations_activities.loc[activity,'daily_duration']/2
+        cumulated_duration += df_stations_activities.loc[activity,'daily_duration']
         current_station = df_stations_activities.loc[activity, 'station_nb']
         if cummulated_duration_on_middle_of_activity > duration_operator or cumulated_duration > shift_duration or len(working_on_stations) > 1:
-            cummulated_duration_on_middle_of_activity = df_stations_activities.loc[activity, 'weighted_average']/2
+            cummulated_duration_on_middle_of_activity = df_stations_activities.loc[activity, 'daily_duration']/2
             
-            cumulated_duration = df_stations_activities.loc[activity,'weighted_average']
+            cumulated_duration = df_stations_activities.loc[activity,'daily_duration']
             operator_nb += 1
             started_on_station = df_stations_activities['station_nb']
             rest_nb_operators -= 1
@@ -67,7 +74,7 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
             working_on_stations = set()
             working_on_stations.add(current_station)
 
-        rest_production_duration -= df_stations_activities.loc[activity, 'weighted_average']
+        rest_production_duration -= df_stations_activities.loc[activity, 'daily_duration']
         df_stations_activities.loc[activity, 'operator_nb'] = operator_nb
         working_on_stations.add(current_station)
 
