@@ -121,13 +121,15 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 
 
 layout = html.Div(id='pageContent',children=[
+    html.H1('Station Balancing page'),
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
-    html.H1('Station Balancing page'),
-    html.Div('enter the number of stations on the production line'),
+    html.Hr(id="horizontalLine"),
+    html.Div(id='instructions',children=['enter the number of stations on the production line']),
     dcc.Input(id='nb_station_input', value=10, type='number',
               min=1, placeholder='number of stations'),
-    html.Div('Enter the list of activities for the production'),
+    html.Hr(id="horizontalLine"),
+    html.Div(id='instructions',children=['Enter the list of activities for the production']),
     dcc.Upload(id='upload_station_data',
                children=html.Div(
                    [
@@ -139,7 +141,7 @@ layout = html.Div(id='pageContent',children=[
                style={
                    'width': '100%',
                    'height': '60px',
-                   'lineHeight': '60px',
+                   'lineHeight': '30px',
                    'borderWidth': '1px',
                    'borderStyle': 'dashed',
                    'borderRadius': '5px',
@@ -147,6 +149,7 @@ layout = html.Div(id='pageContent',children=[
                    'margin': '10px'
                },
                ),
+    html.H3('OR'),
     dash_table.DataTable(
         id='table_initial_stations',
         columns=[{'id': name, 'name': name, 'type': type}
@@ -156,7 +159,8 @@ layout = html.Div(id='pageContent',children=[
         row_deletable=True
     ),
     html.Button('Add row', id='add_sation_row'),
-    html.Div('Enter the list of product needed to be produced on the same line'),
+    html.Hr(id="horizontalLine"),
+    html.Div(id='instructions',children=['Enter the list of product needed to be produced on the same line']),
     dash_table.DataTable(
         id='table_nb_products',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
@@ -166,7 +170,8 @@ layout = html.Div(id='pageContent',children=[
             'backgroundColor': '#f8f8f8',
         }]
     ),
-    html.H3('Suggested stations of for the activity blocks on the production line'),
+    html.Hr(id="horizontalLine"),
+    html.Div(id='instructions',children=['Suggested stations of for the activity blocks on the production line']),
     dash_table.DataTable(
         id='table_suggested_order_stations',
         columns=[
