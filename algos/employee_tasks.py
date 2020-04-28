@@ -55,27 +55,29 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
 
     operator_nb = 0
     cumulated_duration = 0
-
+    working_on_stations = set()
+    working_on_stations.add(df_stations_activities['station_nb'].iloc[0])
+    print(working_on_stations)
     for activity in df_stations_activities.index:
-        cummulated_duration_on_middle_of_activity = cumulated_duration + df_stations_activities.loc[activity,
-                                                                                                     'weighted_average']/2
-        cumulated_duration += df_stations_activities.loc[activity,
-                                                         'weighted_average']
-        if cummulated_duration_on_middle_of_activity > duration_operator or cumulated_duration > shift_duration:
-            cummulated_duration_on_middle_of_activity = df_stations_activities.loc[activity,
-                                                                                                     'weighted_average']/2
+        cummulated_duration_on_middle_of_activity = cumulated_duration + df_stations_activities.loc[activity,'weighted_average']/2
+        cumulated_duration += df_stations_activities.loc[activity,'weighted_average']
+        current_station = df_stations_activities.loc[activity, 'station_nb']
+        if cummulated_duration_on_middle_of_activity > duration_operator or cumulated_duration > shift_duration or len(working_on_stations) > 1:
+            cummulated_duration_on_middle_of_activity = df_stations_activities.loc[activity, 'weighted_average']/2
             
-            cumulated_duration = df_stations_activities.loc[activity,
-                                                            'weighted_average']
+            cumulated_duration = df_stations_activities.loc[activity,'weighted_average']
             operator_nb += 1
+            started_on_station = df_stations_activities['station_nb']
             rest_nb_operators -= 1
             if rest_nb_operators*shift_duration < rest_production_duration:
                 return None 
             duration_operator = rest_production_duration/rest_nb_operators
+            working_on_stations = set()
+            working_on_stations.add(current_station)
 
-        rest_production_duration -= df_stations_activities.loc[activity,
-                                                               'weighted_average']
+        rest_production_duration -= df_stations_activities.loc[activity, 'weighted_average']
         df_stations_activities.loc[activity, 'operator_nb'] = operator_nb
+        working_on_stations.add(current_station)
 
     df_stations_activities['operator_nb'] = df_stations_activities['operator_nb'].astype(
         int)

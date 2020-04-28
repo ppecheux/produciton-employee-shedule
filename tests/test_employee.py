@@ -67,13 +67,13 @@ class TestAssignStations(unittest.TestCase):
     def test_assign_employees_like_stations_no_more_two_stations(self):
         df_stations_activities = pd.DataFrame({
             "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
-            'weighted_average': [1]*4,
+            'weighted_average': [1,1,1,6],
             "station_nb": [i for i in range(4)],
         }).set_index('activity_block_name')
 
         expected = pd.DataFrame({
             "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
-            'weighted_average': [1]*4,
+            'weighted_average': [1,1,1,6],
             "station_nb": [i for i in range(4)],
             'operator_nb': [0,0,1,1]
         }).set_index('activity_block_name')
@@ -82,6 +82,7 @@ class TestAssignStations(unittest.TestCase):
         print(result)
 
         self.assertTrue(result.equals(expected))
+
 
 if __name__ == "__main__":
     unittest.main()
