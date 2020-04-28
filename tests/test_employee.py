@@ -13,7 +13,7 @@ class TestAssignStations(unittest.TestCase):
         self.df_activities = pd.DataFrame({
             "product": ["cabineA", "cabineA", "cabineB", "cabineB"],
             "activity_block_name": ["activity1", "activity2", "activity1", "activity2"],
-            "activity_block_duration":  [pd.Timedelta(minutes=1), pd.Timedelta(minutes=1), pd.Timedelta(minutes=1), pd.Timedelta(minutes=1)],
+            "activity_block_duration":  [1]*4,
             "station_nb": ['station1']*4,
             "employee": [np.nan]*4
         })
@@ -30,7 +30,7 @@ class TestAssignStations(unittest.TestCase):
                                                 input_shift_duration_hour=8,
                                                 input_operator_efficiency=1)
         df_with_employees = pd.DataFrame.from_dict(records_with_employees)
-        self.assertFalse(df_with_employees.employee.isnull().values.any())
+        self.assertFalse(df_with_employees.operator_nb.isnull().values.any())
 
     def test_assign_employee_every_two_stations(self):
         df_stations_activities = pd.DataFrame({
@@ -60,8 +60,27 @@ class TestAssignStations(unittest.TestCase):
             'operator_nb': [0,1,2,3]
         }).set_index('activity_block_name')
 
+
         result = assign_employees_like_stations(df_stations_activities, 4, 7, 1)
+        self.assertTrue(result.equals(expected))
+
+    def test_assign_employees_like_stations_no_more_two_stations(self):
+        df_stations_activities = pd.DataFrame({
+            "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
+            'weighted_average': [1]*4,
+            "station_nb": [i for i in range(4)],
+        }).set_index('activity_block_name')
+
+        expected = pd.DataFrame({
+            "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
+            'weighted_average': [1]*4,
+            "station_nb": [i for i in range(4)],
+            'operator_nb': [0,0,1,1]
+        }).set_index('activity_block_name')
+
+        result = assign_employees_like_stations(df_stations_activities, 2, 7, 1)
         print(result)
+
         self.assertTrue(result.equals(expected))
 
 if __name__ == "__main__":
