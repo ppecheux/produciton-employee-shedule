@@ -14,7 +14,7 @@ from views.functions_for_views.input_components import takt_time_input
 
 from algos.employee_tasks import assign_employee
 table_input_colums = {"product": "text", "activity_block_name": "text",
-                "activity_block_duration": "numeric", "station": "numeric"}
+                "activity_block_duration": "numeric", "station_nb": "numeric"}
 
 @app.callback([Output('table_initial_operators', 'columns'),
                Output('table_initial_operators', 'data')],
@@ -56,15 +56,17 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
     try:
         activities = []
         for row in init_data:
-            if '' not in (row['product'], row['activity_block_name'], row['activity_block_duration'], row['station']):
+            if '' not in (row['product'], row['activity_block_name'], row['activity_block_duration'], row['station_nb']):
                 row['activity_block_duration'] = float(
                     row['activity_block_duration'])
-                row['station'] = int(row['station'])
+                row['station_nb'] = int(row['station_nb'])
                 activities.append(row)
     except TypeError:
         raise PreventUpdate
+    print(pd.DataFrame.from_records(activities))
     suggested_operators = assign_employee(
         activities, table_nb_products, int(input_shift_duration_hour), float(input_operator_efficiency))
+    print(pd.DataFrame.from_dict(suggested_operators))
     if not suggested_operators:
         raise PreventUpdate
     return suggested_operators
@@ -81,23 +83,23 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     if not table_data or not table_nb_products:
         raise PreventUpdate
     df = pd.DataFrame.from_records(table_data)
-    df.station_nb = pd.to_numeric(df.station_nb, errors='coerce')
-    table_data_names = df.station_nb[~np.isnan(df.station_nb)].unique()
+    df.station_nb = pd.to_numeric(df.operator_nb, errors='coerce')
+    table_data_names = df.operator_nb[~np.isnan(df.station_nb)].unique()
     if not len(table_data_names):
         raise PreventUpdate
 
     nb_unique_products = len(df['product'].unique())
     station_durations = {}
-    for station in table_data_names:
-        if not np.isnan(station):
-            station_durations[int(station)] = df.loc[df.station_nb ==
-                                                     station, 'activity_block_duration'].sum()/nb_unique_products
+    for operator in table_data_names:
+        if not np.isnan(operator):
+            station_durations[int(operator)] = df.loc[df.operator_nb ==
+                                                     operator, 'activity_block_duration'].sum()/nb_unique_products
     figure['data'] = [
         {
             'x': [nb],
             'y': [duration],
             'type': 'bar',
-            'name': f'station {nb}'
+            'name': f'operator {nb}'
         } for nb, duration in station_durations.items()
     ]+[
         {
@@ -166,7 +168,7 @@ layout = dbc.Container([
             {'id': 'activity_block_name', 'name': 'activity_block_name'},
             {'id': 'activity_block_duration', 'name': 'activity_block_duration'},
             {'id': 'station_nb', 'name': 'station'},
-            {'id': 'operator', 'name': 'operator'},
+            {'id': 'operator_nb', 'name': 'operator'},
         ]
     ),
     dcc.Graph(
