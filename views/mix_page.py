@@ -122,7 +122,8 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 layout = html.Div(id='pageContent', children=[
         html.H3('Change takt time by tweaking these parameters: '),
         takt_time_input,
-        html.H1('List of products needed to be produced'),
+        html.Hr(id="horizontalLine",style={'width': '100%','size':'2', 'color':'pink'}),
+        html.Div(id='instructions',children=['List of products needed to be produced']),
         dcc.Upload(
             id='upload_mix_data',
             children=html.Div(
@@ -152,7 +153,8 @@ layout = html.Div(id='pageContent', children=[
             row_deletable=True
         ),
         html.Button('Add row', id='add_button'),
-        html.H1('Suggested order of products on the production line'),
+        html.Hr(id="horizontalLine",style={'width': '100%','size':'2', 'color':'pink'}),
+        html.Div(id='instructions',children=['Suggested order of products on the production line']),
         dash_table.DataTable(
             id='table_suggested_order',
             columns=[

@@ -18,6 +18,21 @@ img {
 
 }
 
+#instructions{
+  color: navy;
+  font-size: 40px;
+  position: center;
+  font-family: OCR A Std, monospace;
+  margin:20px;
+}
+
+hr{
+  width: 100%;
+  size:2;
+  color:pink;
+
+}
+
 #pageContent{
   margin-right: 5%;
   width: 90%;
