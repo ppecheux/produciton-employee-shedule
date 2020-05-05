@@ -31,6 +31,8 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
         init_data.append({c['id']: '' for c in columns})
         return [columns, init_data]
     # case we upload data
+    if not contents:
+        raise PreventUpdate
     return update_table_from_upload(contents, filename, table_input_colums)
 
 @app.callback(

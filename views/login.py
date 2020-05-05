@@ -50,28 +50,28 @@ layout = dbc.Container([
 ])
 
 
-@app.callback([Output('url', 'pathname'), Output('success_login_link', 'children')],
-              [Input('loginButton', 'n_clicks')],
-               [State('usernameBox', 'n_submit'),
-               State('passwordBox', 'n_submit'),
-              State('usernameBox', 'value'),
-               State('passwordBox', 'value'),
-               State('url', 'pathname')])
-def sucess(n_clicks, usernameSubmit, passwordSubmit, username, password, pathname):
-    if (n_clicks > 0) or (usernameSubmit > 0) or (passwordSubmit) > 0:
-        user = User.query.filter_by(username=username).first()
-        if not n_clicks:
-            print(f'no {n_clicks}')
-            raise PreventUpdate
-        print(user)
-        if pathname == '/success_login':
-            raise PreventUpdate
-        if user:
-            if check_password_hash(user.password, password):
-                login_user(user)
-                print(f'loged {pathname}')
-                return ['/success_login', pathname]
-    raise PreventUpdate
+# @app.callback([Output('url', 'pathname'), Output('success_login_link', 'children')],
+#               [Input('loginButton', 'n_clicks')],
+#                [State('usernameBox', 'n_submit'),
+#                State('passwordBox', 'n_submit'),
+#               State('usernameBox', 'value'),
+#                State('passwordBox', 'value'),
+#                State('url', 'pathname')])
+# def sucess(n_clicks, usernameSubmit, passwordSubmit, username, password, pathname):
+#     if (n_clicks > 0) or (usernameSubmit > 0) or (passwordSubmit) > 0:
+#         user = User.query.filter_by(username=username).first()
+#         if not n_clicks:
+#             print(f'no {n_clicks}')
+#             raise PreventUpdate
+#         print(user)
+#         if pathname == '/success_login':
+#             raise PreventUpdate
+#         if user:
+#             if check_password_hash(user.password, password):
+#                 login_user(user)
+#                 print(f'loged {pathname}')
+#                 return ['/success_login', pathname]
+#     raise PreventUpdate
 
 
 

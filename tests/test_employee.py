@@ -60,7 +60,7 @@ class TestAssignStations(unittest.TestCase):
         expected = pd.DataFrame({
             "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
             "station_nb": list(range(4)),
-            'employee_nb': [0,0,1,1]
+            'employee_nb': [1,1,2,2]
         }).set_index('activity_block_name')
         result = assign_employee_every_two_stations(df_stations_activities)
         self.assertTrue(result.equals(expected))
@@ -76,7 +76,7 @@ class TestAssignStations(unittest.TestCase):
             "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
             'daily_duration': [6]*4,
             "station_nb": [i for i in range(4)],
-            'operator_nb': [0,1,2,3]
+            'operator_nb': [1,2,3,4]
         }).set_index('activity_block_name')
 
 
@@ -94,7 +94,7 @@ class TestAssignStations(unittest.TestCase):
             "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
             'daily_duration': [1,1,1,6],
             "station_nb": [i for i in range(4)],
-            'operator_nb': [0,0,1,1]
+            'operator_nb': [1,1,2,2]
         }).set_index('activity_block_name')
 
         result = assign_employees_like_stations(df_stations_activities, 2, 7, 1)
@@ -112,7 +112,7 @@ class TestAssignStations(unittest.TestCase):
             "activity_block_name": ["activity1", "activity2", "activity3", "activity4"],
             'daily_duration': [pd.Timedelta(hours=1),pd.Timedelta(hours=1),pd.Timedelta(hours=1),pd.Timedelta(hours=6)],
             "station_nb": [i for i in range(4)],
-            'operator_nb': [0,0,1,1]
+            'operator_nb': [1,1,2,2]
         }).set_index('activity_block_name')
 
         result = assign_employees_like_stations(df_stations_activities, 2, 7, 1)

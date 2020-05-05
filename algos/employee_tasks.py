@@ -53,7 +53,7 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
     duration_operator = min(
         duration_operator, rest_production_duration/rest_nb_operators)
 
-    operator_nb = 0
+    operator_nb = 1
     working_on_stations = set()
     df_stations_activities.sort_values(by='station_nb', inplace=True)
     working_on_stations.add(df_stations_activities['station_nb'].iloc[0])
@@ -96,5 +96,5 @@ def assign_employee_every_two_stations(df_stations_activities: pd.DataFrame) -> 
                                                           how='left',
                                                           right_index=True,
                                                           left_on="station_nb")
-
+    df_stations_activities['employee_nb'] = df_stations_activities['employee_nb'] + 1
     return df_stations_activities
