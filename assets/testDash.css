@@ -81,6 +81,8 @@ hr{
   background: linear-gradient(to right, white, RGB(161,179,246) );
   opacity: 100%;
   z-index: 2;
+  display: table;   /* Allow the centering to work */
+  margin: 0 auto;
 }
 #homepage #content{
   margin:auto;
@@ -100,9 +102,11 @@ height:50px;
 }
 
 #navigation ul{
-  margin-top:10px;
+  margin-top:0px;
 	height: 100%;
-	width: 100%
+	width: 100%;
+  margin-right: 0px;
+  margin-left: 0px;
 }
 
  #navigation {
@@ -114,11 +118,8 @@ height:50px;
 
 /*Ici c'est pour modifier le cadre des boutons*/
 #navigation li {
-  height: 100%;
-  width: 100%;
-	padding: 10px 40px ;
   display: inline ;
-  margin-right: 1px ;
+  margin: 2.5% ;
   background: none ;
   border: none;
   line-height: 1em ;
@@ -135,7 +136,7 @@ li button{
   font-family: OCR A Std, monospace;
   font-weight: bold;
   font-size: 20px;
-  padding: 12px 12px;
+  padding: 10% 10%;
 }
 li button:hover {
   box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
@@ -148,20 +149,21 @@ li a:link {
   background-color: transparent;
   font-family: OCR A Std, monospace;
   font-weight: bold;
-  font-size: 25px;
-  padding: 20px 20px;
+  font-size: 120%;
+  padding: 3% 2%;
   text-decoration:none;
 }
 li a:visited{
-  text-decoration:none;
-   color:black;
+  color:black;
   border:none;
   text-decoration: none;
   background-color: transparent;
   font-family: OCR A Std, monospace;
   font-weight: bold;
-  font-size: 25px;
-  padding: 20px 20px;
+  font-size: 100%;
+  padding: 5% 2%;
+  text-decoration:none;
+
 }
 
 li a:active{
