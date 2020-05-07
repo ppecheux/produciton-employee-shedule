@@ -6,7 +6,8 @@ from dash.exceptions import PreventUpdate
 
 
 def update_table_from_upload(contents, filename, table_colums):
-
+    if not filename:
+        raise PreventUpdate
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
