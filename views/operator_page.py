@@ -14,7 +14,8 @@ from views.functions_for_views.input_components import takt_time_input
 
 from algos.employee_tasks import assign_employee
 table_input_colums = {"product": "text", "activity_block_name": "text",
-                "activity_block_duration": "text", "station_nb": "numeric"}
+                      "activity_block_duration": "text", "station_nb": "numeric"}
+
 
 @app.callback([Output('table_initial_operators', 'columns'),
                Output('table_initial_operators', 'data')],
@@ -31,19 +32,19 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
         init_data.append({c['id']: '' for c in columns})
         return [columns, init_data]
     # case we upload data
-    if not contents:
-        raise PreventUpdate
+
     return update_table_from_upload(contents, filename, table_input_colums)
+
 
 @app.callback(
     Output('table_suggested_operator', 'data'),
-    [Input('table_initial_operators', 'data'), #TODO does not trigger !
+    [Input('table_initial_operators', 'data'),  # TODO does not trigger !
      Input('table_nb_products_operator', 'data'),
      Input('input_shift_duration_hour', 'value'),
      Input('input_operator_efficiency', 'value')],
 )
 def data_table_suggested_order(init_data, table_nb_products, input_shift_duration_hour, input_operator_efficiency):
-    print('in suggestion')    
+    print('in suggestion')
     if not init_data or not table_nb_products:
         raise PreventUpdate
     # create a list of time needed for each product
@@ -57,10 +58,12 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
         raise PreventUpdate
 
     try:
-        df_activities = df_activities.astype({"activity_block_duration": float})
+        df_activities = df_activities.astype(
+            {"activity_block_duration": float})
     except ValueError:
         try:
-            df_activities['activity_block_duration'] = pd.to_timedelta(df_activities.activity_block_duration)
+            df_activities['activity_block_duration'] = pd.to_timedelta(
+                df_activities.activity_block_duration)
         except ValueError:
             print("echec de conversion des durées")
             raise PreventUpdate
@@ -76,6 +79,7 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
     suggested_operators = df_suggested.to_dict('rows')
     return suggested_operators
 
+
 @app.callback(
     Output('table_nb_products_operator', 'data'),
     [Input('table_initial_operators', 'data')],
@@ -84,6 +88,7 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
 def data_table_nb_products_operator(table_initial_operators, table_nb_products_operator):
     print('in quantity')
     return data_table_nb_products(table_initial_operators, table_nb_products_operator)
+
 
 @app.callback(
     Output('graph_suggested_operators', 'figure'),
@@ -97,33 +102,37 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     if not table_data or not table_nb_products:
         raise PreventUpdate
     df = pd.DataFrame.from_records(table_data)
+    df = df.merge(pd.DataFrame.from_records(table_nb_products),
+                  how="left",
+                  on="product")
+    df['total_duration_activity'] = df['quantity']*df['activity_block_duration']
     df.station_nb = pd.to_numeric(df.operator_nb, errors='coerce')
     table_data_names = df.operator_nb[~np.isnan(df.station_nb)].unique()
     if not len(table_data_names):
         raise PreventUpdate
 
     nb_unique_products = len(df['product'].unique())
-    station_durations = {}
+    operator_duration = {}
     for operator in table_data_names:
         if not np.isnan(operator):
-            station_durations[int(operator)] = df.loc[df.operator_nb ==
-                                                     operator, 'activity_block_duration'].sum()/nb_unique_products
+            operator_duration[int(operator)] = df.loc[df.operator_nb ==
+                                                      operator, 'total_duration_activity'].sum()
     figure['data'] = [
         {
             'x': [nb],
             'y': [duration],
             'type': 'bar',
             'name': f'operator {nb}'
-        } for nb, duration in station_durations.items()
+        } for nb, duration in operator_duration.items()
     ]+[
         {
-            'x': list(station_durations.keys()),
-            'y': [np.mean(list(station_durations.values()))]*len(station_durations),
+            'x': list(operator_duration.keys()),
+            'y': [np.mean(list(operator_duration.values()))]*len(operator_duration),
             'name': 'average operator work duration'
         }
     ]+[
         {
-            'x': list(station_durations.keys()),
+            'x': list(operator_duration.keys()),
             'y': [input_shift_duration_hour*60*input_operator_efficiency/100] * len(table_data_names),
             'name': 'target work duration'
         }
@@ -132,12 +141,13 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     return figure
 
 
-layout = html.Div(id='pageContent',children=[
+layout = html.Div(id='pageContent', children=[
     html.H1('Operator scheduling page'),
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions',children=['Enter the list of activities for the production']),
+    html.Div(id='instructions', children=[
+             'Enter the list of activities for the production']),
     dcc.Upload(id='upload_operator_data',
                children=html.Div(
                    [
@@ -169,11 +179,12 @@ layout = html.Div(id='pageContent',children=[
     ),
     html.Button('Add row', id='add_operator_row'),
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions',children=['Enter the quantity of product needed to be produced']),
+    html.Div(id='instructions', children=[
+             'Enter the quantity of product needed to be produced']),
     dash_table.DataTable(
         id='table_nb_products_operator',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
-                {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
+                 {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
         style_data_conditional=[{
             'if': {'column_id': 'product'},
             'backgroundColor': '#f8f8f8',

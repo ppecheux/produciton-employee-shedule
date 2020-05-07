@@ -37,12 +37,10 @@ table_colums = {"name": "text", "time": "numeric", "quantity": "numeric"}
 def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_data, columns):
 
     # case we want to add a row
-    print(columns)
     user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
     if user_click and user_click == 'add_button':
         init_data.append({c['id']: '' for c in columns})
         return [columns, init_data]
-    print('upload')
     # case we upload data
     return update_table_from_upload(contents, filename, table_colums)
 
