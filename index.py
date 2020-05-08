@@ -8,13 +8,13 @@ from flask_login import logout_user, current_user
 from views.functions_for_views.input_components import NavBar
 from views.functions_for_views.input_components import Footer
 from views import login, error, profile, user_admin, mix_page, success_login
-from views import mix_page, station_page, operator_page, homepage
+from views import mix_page, station_page, operator_page, homepage, tutorials
 
 from datetime import datetime as dt
 import sys
 
 dashboard_pages = {'/mix': mix_page,
-                   '/station': station_page, '/operator': operator_page}
+                   '/station': station_page, '/operator': operator_page, '/tutorials':tutorials}
 app.layout = html.Div([
     dcc.Location(id='url'),
     html.Div(id='homepage', children=[
