@@ -8,7 +8,7 @@ from flask_login import logout_user, current_user
 from views.functions_for_views.input_components import NavBar
 from views.functions_for_views.input_components import Footer
 from views import login, error, profile, user_admin, mix_page, success_login
-from views import mix_page, station_page, operator_page
+from views import mix_page, station_page, operator_page, homepage
 
 from datetime import datetime as dt
 import sys
@@ -41,7 +41,7 @@ def displayPage(pathname):
         if current_user.is_authenticated:
             layout = profile.layout
         else:
-            layout = mix_page.layout
+            layout = homepage.layout
 
     elif pathname == '/logout':
         if current_user.is_authenticated:
