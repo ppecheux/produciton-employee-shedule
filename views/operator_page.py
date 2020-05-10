@@ -210,6 +210,9 @@ layout = html.Div(id='pageContent', children=[
                 'xaxis': {'title': 'operator number'},
                 'yaxis': {'title': 'operator duration in minutes'}
             }
+        },
+        config={
+            'displaylogo': False
         }
     )
 ])

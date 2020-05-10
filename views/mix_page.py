@@ -118,60 +118,65 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 
 
 layout = html.Div(id='pageContent', children=[
-        html.H1("Production Mix Page"),
-        html.H3('Change takt time by tweaking these parameters: '),
-        takt_time_input,
-        html.Hr(id="horizontalLine"),
-        html.Div(id='instructions',children=['List of products needed to be produced']),
-        dcc.Upload(
-            id='upload_mix_data',
-            children=html.Div(
-                [
-                    'Drag and Drop or ',
-                    html.A('Select File'),
-                    ' (csv or xls) \n must have name, time and quantity columns'
-                ]
-            ),
-            style={
-                'width': '100%',
-                'height': '60px',
-                'lineHeight': '60px',
-                'borderWidth': '1px',
-                'borderStyle': 'dashed',
-                'borderRadius': '5px',
-                'textAlign': 'center',
-                'margin': '10px'
-            },
+    html.H1("Production Mix Page"),
+    html.H3('Change takt time by tweaking these parameters: '),
+    takt_time_input,
+    html.Hr(id="horizontalLine"),
+    html.Div(id='instructions', children=[
+             'List of products needed to be produced']),
+    dcc.Upload(
+        id='upload_mix_data',
+        children=html.Div(
+            [
+                'Drag and Drop or ',
+                html.A('Select File'),
+                ' (csv or xls) \n must have name, time and quantity columns'
+            ]
         ),
-        dash_table.DataTable(
-            id='table_initial_quantity_time',
-            columns=[{'id': name, 'name': name, 'type': type}
-                     for name, type in table_colums.items()],
-            data=[],
-            editable=True,
-            row_deletable=True
-        ),
-        html.Button('Add row', id='add_button'),
-        html.Hr(id="horizontalLine"),
-        html.Div(id='instructions',children=['Suggested order of products on the production line']),
-        dash_table.DataTable(
-            id='table_suggested_order',
-            columns=[
-                {'id': 'name', 'name': 'name'},
-                {'id': 'time', 'name': 'time'},
-                {'id': 'cumulated_time', 'name': 'cumulated_time'}
-            ],
-            export_format='csv',
-            export_headers='names'
-        ),
-        dcc.Graph(
-            id='graph_suggested_order',
-            figure={
-                'layout': {
-                    'title': 'order of production visualization',
-                    'xaxis': {'title': 'rank on the production line'},
-                    'yaxis': {'title': 'production time'}
-                }
+        style={
+            'width': '100%',
+            'height': '60px',
+            'lineHeight': '60px',
+            'borderWidth': '1px',
+            'borderStyle': 'dashed',
+            'borderRadius': '5px',
+            'textAlign': 'center',
+            'margin': '10px'
+        },
+    ),
+    dash_table.DataTable(
+        id='table_initial_quantity_time',
+        columns=[{'id': name, 'name': name, 'type': type}
+                 for name, type in table_colums.items()],
+        data=[],
+        editable=True,
+        row_deletable=True
+    ),
+    html.Button('Add row', id='add_button'),
+    html.Hr(id="horizontalLine"),
+    html.Div(id='instructions', children=[
+             'Suggested order of products on the production line']),
+    dash_table.DataTable(
+        id='table_suggested_order',
+        columns=[
+            {'id': 'name', 'name': 'name'},
+            {'id': 'time', 'name': 'time'},
+            {'id': 'cumulated_time', 'name': 'cumulated_time'}
+        ],
+        export_format='csv',
+        export_headers='names'
+    ),
+    dcc.Graph(
+        id='graph_suggested_order',
+        figure={
+            'layout': {
+                'title': 'order of production visualization',
+                'xaxis': {'title': 'rank on the production line'},
+                'yaxis': {'title': 'production time'}
             }
-        )
-    ])
+        },
+        config={
+            'displaylogo': False
+        }
+    )
+])

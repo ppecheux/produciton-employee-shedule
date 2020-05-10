@@ -29,7 +29,6 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def displayPage(pathname):
     layout = None
-    print(f'path_name {pathname}')
     for pathname_dashboard, file in dashboard_pages.items():
         if pathname == pathname_dashboard and file:
             layout = file.layout

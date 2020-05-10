@@ -189,6 +189,9 @@ layout = html.Div(id='pageContent',children=[
                 'xaxis': {'title': 'station number'},
                 'yaxis': {'title': 'station duration'}
             }
+        },
+        config={
+            'displaylogo': False
         }
     )
 ])
