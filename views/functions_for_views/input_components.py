@@ -33,8 +33,7 @@ NavBar=html.Div(id='header',children=[
         html.Li(children=[ html.A('Tutorial',id='tutorial_page',href='/tutorial')]),
         html.Li(children=[html.A('Estações', id='station_mix',href='/station')]),
         html.Li(children=[ html.A('Operadores', id='operators_mix',href='/operator')]),
-        html.Li(children=[ html.A('Mix de Produçaõ', id='Production_mix',href='/mix')]),
-        html.Li(children=[ html.A('Entrar',style={'border-radius':'30%','border':'2px solid red'}, id='entry')]),
+        html.Li(children=[ html.A('Mix de Produção', id='Production_mix',href='/mix')]),
     ]),
     ])
 Footer=html.Div(id='footer',children=[

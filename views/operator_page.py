@@ -141,7 +141,7 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     return figure
 
 
-layout = html.Div(id='pageContent', children=[
+layout = html.Div(id='pageContent2', children=[
     html.H1('Operator scheduling page'),
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
