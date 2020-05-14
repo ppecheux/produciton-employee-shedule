@@ -92,9 +92,14 @@ def activities_weighted_avg(df_activities, df_products) -> pd.DataFrame:
 
     df_activities['duration_times_quantity'] = df_activities[
         'activity_block_duration'] * df_activities['quantity']
-    df_activities = (df_activities[['activity_block_name', 'duration_times_quantity', 'min_sequence_rank', 'max_sequence_rank']]
+    if 'min_sequence_rank' in df_activities.columns:
+        df_activities = (df_activities[['activity_block_name', 'duration_times_quantity', 'min_sequence_rank', 'max_sequence_rank']]
                      .groupby(['activity_block_name'])
                      .agg({'min_sequence_rank': 'max', 'max_sequence_rank': 'min', 'duration_times_quantity': 'sum'}))
+    else:
+        df_activities = (df_activities[['activity_block_name', 'duration_times_quantity']]
+                     .groupby(['activity_block_name'])
+                     .agg({'duration_times_quantity': 'sum'}))        
     df_activities['weighted_average'] = df_activities[
         'duration_times_quantity'] / total_quantity_product
 
