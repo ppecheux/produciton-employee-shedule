@@ -4,7 +4,7 @@ import numpy as np
 
 
 def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
-    #df = pd.read_json(activities, encoding='records')
+    # df = pd.read_json(activities, encoding='records')
     df = pd.DataFrame.from_records(activities)
     if df.empty:
         return []
@@ -22,13 +22,28 @@ def assign_stations(activities: list, products: list, nb_stations: int) -> dict:
     activities = df.to_dict('rows')
     return activities
 
+def fill_sequence_rank(df: pd.DataFrame) -> pd.DataFrame:
+    if df['min_sequence_rank'].isnull().all() or df['max_sequence_rank'].isnull().all():
+        if df['min_sequence_rank'].isnull().all():
+            if df['max_sequence_rank'].isnull().all():
+                df['max_sequence_rank'] = 0
+            df['min_sequence_rank'] = df['max_sequence_rank'].min()    
+        else:
+            df['max_sequence_rank'] = df['min_sequence_rank'].max()
+
+    df.loc[pd.isna(df.min_sequence_rank), 'min_sequence_rank'] = df['min_sequence_rank'].min()
+    df.loc[pd.isna(df.max_sequence_rank), 'max_sequence_rank'] = df['max_sequence_rank'].max()
+    return df
 
 def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> pd.DataFrame:
     df_weighted_avg['station_nb'] = [np.nan] * len(df_weighted_avg)
 
-    unique_ranks = list(df_weighted_avg['min_sequence_rank'].unique(
-    )) + list(df_weighted_avg['max_sequence_rank'].unique())
-    print(unique_ranks)
+    df_weighted_avg = fill_sequence_rank(df_weighted_avg)
+
+    print(df_weighted_avg)
+
+    unique_ranks = sorted(list(set(df_weighted_avg['min_sequence_rank'].unique())
+                               | set(df_weighted_avg['max_sequence_rank'].unique())))
 
     # compute time per station:
     rest_production_duration = df_weighted_avg['weighted_average'].sum()
@@ -40,24 +55,36 @@ def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> 
         cummulated_duration = pd.Timedelta('0 days')
 
     station_nb = 1
-    for activity in df_weighted_avg.index:
 
-        cummulated_duration_on_middle_of_activity = (cummulated_duration
-                                                     + df_weighted_avg.loc[activity, 'weighted_average']/2)
-        cummulated_duration += df_weighted_avg.loc[activity,
-                                                   'weighted_average']
-        while cummulated_duration_on_middle_of_activity > time_per_station:
-            cummulated_duration_on_middle_of_activity = df_weighted_avg.loc[
-                activity, 'weighted_average']/2
-            cummulated_duration = df_weighted_avg.loc[activity,
-                                                      'weighted_average']
-            station_nb += 1
-            rest_nb_stations -= 1
-            time_per_station = rest_production_duration/rest_nb_stations
+    for rank in unique_ranks:
+        possible_activities = df_weighted_avg[(df_weighted_avg.min_sequence_rank <= rank)
+                                              & (df_weighted_avg.max_sequence_rank >= rank)
+                                              & (pd.isna(df_weighted_avg.station_nb))]
 
-        df_weighted_avg.loc[activity, "station_nb"] = station_nb
-        rest_production_duration -= df_weighted_avg.loc[activity,
-                                                        'weighted_average']
+        print(possible_activities)
+        while len(possible_activities):
+            possible_activities.loc[:,'dist_to_target_time'] = (time_per_station
+                                                          - cummulated_duration
+                                                          - possible_activities.weighted_average/2)
+
+            activity = possible_activities.dist_to_target_time.idxmin()
+            cummulated_duration_on_middle_of_activity = (cummulated_duration
+                                                         + df_weighted_avg.loc[activity, 'weighted_average']/2)
+            cummulated_duration += df_weighted_avg.loc[activity,
+                                                       'weighted_average']
+            while cummulated_duration_on_middle_of_activity > time_per_station:
+                cummulated_duration_on_middle_of_activity = df_weighted_avg.loc[
+                    activity, 'weighted_average']/2
+                cummulated_duration = df_weighted_avg.loc[activity,
+                                                          'weighted_average']
+                station_nb += 1
+                rest_nb_stations -= 1
+                time_per_station = rest_production_duration/rest_nb_stations
+            df_weighted_avg.loc[activity, "station_nb"] = station_nb
+            possible_activities = possible_activities[possible_activities.index != activity]
+            rest_production_duration -= df_weighted_avg.loc[activity,
+                                                            'weighted_average']
+
     return df_weighted_avg
 
 

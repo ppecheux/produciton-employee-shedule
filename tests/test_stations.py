@@ -129,5 +129,23 @@ class TestAssignStations(unittest.TestCase):
         df_stations = pd.DataFrame.from_records(stations)
         self.assertEqual(list(df_stations.station_nb.values), [1, 2])
 
+    def test_simple_order(self):
+        len_test = 3
+        df_activities = pd.DataFrame({
+            "product": ["cabineA"] * len_test,
+            "activity_block_name": [f"activity{i}" for i in range(len_test)],
+            "activity_block_duration":  [pd.Timedelta(minutes=1)] * len_test,
+            "min_sequence_rank": reversed(list(range(len_test))),
+            "max_sequence_rank": reversed(list(range(len_test)))
+        })
+        df_product = pd.DataFrame({
+            "product": ["cabineA"],
+            "quantity": [1]
+        })
+        stations = assign_stations(df_activities.to_records(), df_product.to_records(), len_test)
+        df_stations = pd.DataFrame.from_records(stations)
+        df_stations = df_stations.sort_values(by="station_nb")
+        print(df_stations)
+        self.assertEqual(list(df_stations.activity_block_name.values), list(reversed([f"activity{i}" for i in range(len_test)])))
 if __name__ == "__main__":
     unittest.main()
