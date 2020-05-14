@@ -3,7 +3,8 @@ import io
 import pandas as pd
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
-
+from dash.dependencies import Input, Output, State
+from app import app
 
 def update_table_from_upload(contents, filename, table_colums):
     if not filename:
@@ -43,3 +44,15 @@ def data_table_nb_products(table_initial_stations, table_nb_products):
         'quantity': [1]*len(df['product'].unique())
     })
     return df_nb_products.to_dict('records')
+
+def table_export_format_factory(table_id: str):
+    @app.callback(
+        Output(table_id , 'export_format'),
+        [Input('export_format_toggler', 'value')]
+    )
+    def table_export_format(toggler_value):
+        if toggler_value:
+            return 'xlsx'
+        return 'csv'
+
+    return table_export_format
