@@ -179,7 +179,8 @@ layout = html.Div(id='pageContent2',children=[
             {'id': 'activity_block_name', 'name': 'activity_block_name'},
             {'id': 'activity_block_duration', 'name': 'activity_block_duration'},
             {'id': 'station_nb', 'name': 'station_nb'}
-        ]
+        ],
+        sort_action="native",
     ),
     dcc.Graph(
         id='graph_suggested_order_stations',

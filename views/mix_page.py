@@ -164,6 +164,7 @@ layout = html.Div(id='pageContent2', children=[
             {'id': 'time', 'name': 'time'},
             {'id': 'cumulated_time', 'name': 'cumulated_time'}
         ],
+        sort_action="native",
         export_format='csv',
         export_headers='names'
     ),
