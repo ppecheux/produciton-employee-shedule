@@ -31,19 +31,25 @@ def update_table_from_upload(contents, filename, table_colums):
 
     return [[{'name': col.lower(), 'id': col.lower()} for col in df.columns], df.to_dict('records'), ]
 
-def data_table_nb_products(table_initial_stations, table_nb_products):
-    if not table_initial_stations:
-        raise PreventUpdate
-    df = pd.DataFrame.from_records(table_initial_stations)
-    if table_nb_products:
-        df_nb_products = pd.DataFrame.from_records(table_nb_products)
-        if set(df['product'].unique()) == set(df_nb_products['product'].unique()):
+def data_table_nb_products_factory(table_nb_products_id: str, inital_table_id: str):
+    @app.callback(
+        Output(table_nb_products_id, 'data'),
+        [Input(inital_table_id, 'data')],
+        [State(table_nb_products_id, 'data')]
+    )
+    def data_table_nb_products(table_initial_stations, table_nb_products):
+        if not table_initial_stations:
             raise PreventUpdate
-    df_nb_products = pd.DataFrame({
-        'product': list(df['product'].unique()),
-        'quantity': [1]*len(df['product'].unique())
-    })
-    return df_nb_products.to_dict('records')
+        df = pd.DataFrame.from_records(table_initial_stations)
+        if table_nb_products:
+            df_nb_products = pd.DataFrame.from_records(table_nb_products)
+            if set(df['product'].unique()) == set(df_nb_products['product'].unique()):
+                raise PreventUpdate
+        df_nb_products = pd.DataFrame({
+            'product': list(df['product'].unique()),
+            'quantity': [1]*len(df['product'].unique())
+        })
+        return df_nb_products.to_dict('records')
 
 def table_export_format_factory(table_id: str):
     @app.callback(

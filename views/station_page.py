@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
-from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products, table_export_format_factory
+from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products_factory, table_export_format_factory
 from views.functions_for_views.input_components import takt_time_input, export_format_toggler
 
 from algos.stations import assign_stations
@@ -37,13 +37,7 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
     return update_table_from_upload(contents, filename, table_colums)
 
 
-@app.callback(
-    Output('table_nb_products', 'data'),
-    [Input('table_initial_stations', 'data')],
-    [State('table_nb_products', 'data')]
-)
-def data_table_nb_products_stations(table_initial_stations, table_nb_products):
-    return data_table_nb_products(table_initial_stations, table_nb_products)
+data_table_nb_products_factory('table_nb_products', 'table_initial_stations')
 
 table_export_format_factory('table_suggested_order_stations')
 

@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
-from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products, table_export_format_factory
+from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products_factory, table_export_format_factory
 from views.functions_for_views.input_components import takt_time_input, export_format_toggler
 
 from algos.employee_tasks import assign_employee
@@ -39,7 +39,7 @@ table_export_format_factory('table_suggested_operator')
 
 @app.callback(
     Output('table_suggested_operator', 'data'),
-    [Input('table_initial_operators', 'data'),  # TODO does not trigger !
+    [Input('table_initial_operators', 'data'),
      Input('table_nb_products_operator', 'data'),
      Input('input_shift_duration_hour', 'value'),
      Input('input_operator_efficiency', 'value')],
@@ -80,16 +80,7 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
     suggested_operators = df_suggested.to_dict('rows')
     return suggested_operators
 
-
-@app.callback(
-    Output('table_nb_products_operator', 'data'),
-    [Input('table_initial_operators', 'data')],
-    [State('table_nb_products_operator', 'data')]
-)
-def data_table_nb_products_operator(table_initial_operators, table_nb_products_operator):
-    print('in quantity')
-    return data_table_nb_products(table_initial_operators, table_nb_products_operator)
-
+data_table_nb_products_factory('table_nb_products_operator', 'table_initial_operators')
 
 @app.callback(
     Output('graph_suggested_operators', 'figure'),
