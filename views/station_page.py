@@ -16,7 +16,7 @@ from algos.stations import assign_stations
 from algos.stations import activities_weighted_avg
 
 table_colums = {"product": "text", "activity_block_name": "text",
-                "activity_block_duration": "numeric", "fixed_station_nb": "numeric"}
+                "activity_block_duration": "numeric", "min_sequence_rank": "text", "max_sequence_rank": "text"}
 
 
 @app.callback([Output('table_initial_stations', 'columns'),
