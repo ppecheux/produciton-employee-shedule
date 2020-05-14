@@ -26,7 +26,6 @@ encoded_image3 = base64.b64encode(open(image3_filename, 'rb').read())
 table_colums = {"name": "text", "time": "numeric", "quantity": "numeric"}
 
 
-
 @app.callback([Output('table_initial_quantity_time', 'columns'),
                Output('table_initial_quantity_time', 'data')],
               [Input('upload_mix_data', 'contents'),
@@ -45,7 +44,9 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, date, init_
     # case we upload data
     return update_table_from_upload(contents, filename, table_colums)
 
+
 table_export_format_factory('table_suggested_order')
+
 
 @app.callback(
     Output('table_suggested_order', 'data'),
@@ -56,27 +57,44 @@ def data_table_suggested_order(init_data):
         raise PreventUpdate
 
     # create a list of time needed for each product
+    df_activities = pd.DataFrame.from_records(init_data)
+    df_activities.replace('', np.nan, inplace=True)
+    df_activities.dropna(inplace=True)
+    df_activities.name.str.strip()
+
     try:
-        times = []
-        for row in init_data:
-            if '' not in (row['name'], row['time'], row['quantity']):
-                times.extend(
-                    [float(row.get('time', 0))] * int(row.get('quantity', 0))
-                )
-    except TypeError:
+        df_activities = df_activities.astype({"quantity": int})
+    except ValueError:
         raise PreventUpdate
 
+    try:
+        df_activities = df_activities.astype({"time": float})
+    except ValueError:
+        try:
+            df_activities['time'] = pd.to_timedelta(df_activities.time)
+        except ValueError:
+            print("echec de conversion des durées")
+            raise PreventUpdate
+
+    activities = df_activities.to_records()
+    times = []
+    for row in activities:
+        times.extend([row['time']] * row['quantity'])
     mixed_times = merge_mix(times)
+
     # create data for the suggested order table
     suggested_data = []
     cumulated_time = 0
     for time in mixed_times:
         cumulated_time += time
-        for row in init_data:
-            if '' not in (row['name'], row['time'], row['quantity']) and int(row.get('quantity', 0)) > 0 and float(row.get('time', 0)) == time:
+        for row in activities:
+            if row['quantity'] > 0 and row['time'] == time:
                 suggested_data.append(
-                    {'name': row.get('name', None), 'time': time,
-                     'cumulated_time': cumulated_time}
+                    {
+                        'name': row['name'],
+                        'time': time,
+                        'cumulated_time': cumulated_time
+                    }
                 )
                 row['quantity'] = int(row['quantity']) - 1
 
