@@ -1,13 +1,13 @@
 product,activity_block_name,activity_block_duration,min_sequence_rank,max_sequence_rank
-Type A,Access Handle,25.38,,
-Type B,Access Handle,25.38,,
-Type C,Access Handle,23.22,,
-Type A,Dashboard,26.35,,
-Type B,Dashboard,26.35,,
-Type C,Dashboard,25.01,,
-Type A,Windshield,26.07,,
-Type B,Windshield,20.57,,
-Type C,Windshield,26.04,,
+Type A,Access Handle,25.38,2,2
+Type B,Access Handle,25.38,2,2
+Type C,Access Handle,23.22,2,2
+Type A,Dashboard,26.35,1,1
+Type B,Dashboard,26.35,1,1
+Type C,Dashboard,25.01,1,1
+Type A,Windshield,26.07,3,4
+Type B,Windshield,20.57,3,4
+Type C,Windshield,26.04,3,4
 Type A,Sub-assemblies,24.2,,
 Type B,Sub-assemblies,24.2,,
 Type C,Sub-assemblies,23.2,,

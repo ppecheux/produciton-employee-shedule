@@ -27,20 +27,18 @@ def fill_sequence_rank(df: pd.DataFrame) -> pd.DataFrame:
         if df['min_sequence_rank'].isnull().all():
             if df['max_sequence_rank'].isnull().all():
                 df['max_sequence_rank'] = 0
-            df['min_sequence_rank'] = df['max_sequence_rank'].min()    
+            df['min_sequence_rank'] = df['max_sequence_rank'].dropna().min()    
         else:
-            df['max_sequence_rank'] = df['min_sequence_rank'].max()
+            df['max_sequence_rank'] = df['min_sequence_rank'].dropna().max()
 
-    df.loc[pd.isna(df.min_sequence_rank), 'min_sequence_rank'] = df['min_sequence_rank'].min()
-    df.loc[pd.isna(df.max_sequence_rank), 'max_sequence_rank'] = df['max_sequence_rank'].max()
+    df.loc[pd.isna(df.min_sequence_rank), 'min_sequence_rank'] = df['min_sequence_rank'].dropna().min()
+    df.loc[pd.isna(df.max_sequence_rank), 'max_sequence_rank'] = df['max_sequence_rank'].dropna().max()
     return df
 
 def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> pd.DataFrame:
     df_weighted_avg['station_nb'] = [np.nan] * len(df_weighted_avg)
 
     df_weighted_avg = fill_sequence_rank(df_weighted_avg)
-
-    print(df_weighted_avg)
 
     unique_ranks = sorted(list(set(df_weighted_avg['min_sequence_rank'].unique())
                                | set(df_weighted_avg['max_sequence_rank'].unique())))
@@ -61,7 +59,6 @@ def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> 
                                               & (df_weighted_avg.max_sequence_rank >= rank)
                                               & (pd.isna(df_weighted_avg.station_nb))]
 
-        print(possible_activities)
         while len(possible_activities):
             possible_activities.loc[:,'dist_to_target_time'] = (time_per_station
                                                           - cummulated_duration
@@ -95,6 +92,7 @@ def activities_weighted_avg(df_activities, df_products) -> pd.DataFrame:
 
     df_activities['duration_times_quantity'] = df_activities[
         'activity_block_duration'] * df_activities['quantity']
+    df_activities = fill_sequence_rank(df_activities)
     df_activities = (df_activities[['activity_block_name', 'duration_times_quantity', 'min_sequence_rank', 'max_sequence_rank']]
                      .groupby(['activity_block_name'])
                      .agg({'min_sequence_rank': 'max', 'max_sequence_rank': 'min', 'duration_times_quantity': 'sum'}))
