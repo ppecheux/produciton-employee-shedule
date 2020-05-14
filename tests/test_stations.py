@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from algos.stations import weighted_average, activities_weighted_avg
+from algos.stations import activities_weighted_avg
 from algos.stations import assign_stations
 import numpy as np
 import pandas as pd
@@ -31,26 +31,6 @@ class TestAssignStations(unittest.TestCase):
             activities=records, nb_stations=1, products=self.df_product)
         df_with_stations = pd.DataFrame.from_dict(records_with_stations)
         self.assertFalse(df_with_stations.station_nb.isnull().values.any())
-
-    def test_weighted_average(self):
-
-        # Creating a dataframe for the test
-        df = pd.DataFrame({
-            "cabine1": [12, 15, 25, 24, 16],
-            "cabine2": [26, 27, 19, 12, 18],
-            "cabine3": [14, 28, 22, 16, 23]},
-            index=["act1", "act2", "act3", "act4", "act5"])
-
-        # Make sure that the weighted average is right
-        Nb_cabs1 = [20, 14, 8]
-        df_test = weighted_average(df, Nb_cabs1)
-        self.assertEqual(
-            df_test.loc["act5", "Weighted average"], ((16*20+18*14+23*8)/(20+14+8)))
-        # Make sure that the weighted average is right with zero cabs
-        Nb_cabs2 = [0, 10, 8]
-        df_test2 = weighted_average(df, Nb_cabs2)
-        self.assertEqual(
-            df_test2.loc["act3", "Weighted average"], ((19*10+22*8)/(10+8)))
 
     def test_limited_nb_of_stations_used(self):
         nb_stations = 2
