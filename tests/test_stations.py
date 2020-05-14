@@ -16,7 +16,9 @@ class TestAssignStations(unittest.TestCase):
             "product": ["cabineA", "cabineA", "cabineB", "cabineB"],
             "activity_block_name": ["activity1", "activity2", "activity1", "activity2"],
             "activity_block_duration":  [pd.Timedelta(minutes=1), pd.Timedelta(minutes=1), pd.Timedelta(minutes=1), pd.Timedelta(minutes=1)],
-            "fixed_station_nb": [np.nan]*4
+            "fixed_station_nb": [np.nan]*4,
+            "min_sequence_rank": [None] *4,
+            "max_sequence_rank": [None] *4
         })
         self.df_product = pd.DataFrame({
             "product": ["cabineA", "cabineB"],
@@ -82,7 +84,8 @@ class TestAssignStations(unittest.TestCase):
                 "product": ["cabineA"] * 2,
                 "activity_block_name": ["activity1", "activity2"],
                 "activity_block_duration":  [pd.Timedelta(minutes=1), pd.Timedelta(minutes=2)],
-                "fixed_station_nb": [np.nan]*2
+                "min_sequence_rank": [None] *2,
+                "max_sequence_rank": [None] *2
             })
 
         df_products = pd.DataFrame({
@@ -98,7 +101,8 @@ class TestAssignStations(unittest.TestCase):
                 "product": ["cabineA", "cabineB", "cabineC"],
                 "activity_block_name": ["activity1"] * 3,
                 "activity_block_duration":  [pd.Timedelta(minutes=1), pd.Timedelta(minutes=2), pd.Timedelta(minutes=3)],
-                "fixed_station_nb": [np.nan]*3
+                "min_sequence_rank": [None] *3,
+                "max_sequence_rank": [None] *3
             })
 
         df_products = pd.DataFrame({
@@ -114,7 +118,8 @@ class TestAssignStations(unittest.TestCase):
             "product": ["cabineA", "cabineA"],
             "activity_block_name": ["activity1", "activity2"],
             "activity_block_duration":  [pd.Timedelta(minutes=1), pd.Timedelta(minutes=1)],
-            "fixed_station_nb": [np.nan]*2
+            "min_sequence_rank": [None] *2,
+            "max_sequence_rank": [None] *2
         })
         df_product = pd.DataFrame({
             "product": ["cabineA"],
