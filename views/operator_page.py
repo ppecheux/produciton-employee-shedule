@@ -9,8 +9,8 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
-from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products
-from views.functions_for_views.input_components import takt_time_input
+from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products, table_export_format_factory
+from views.functions_for_views.input_components import takt_time_input, export_format_toggler
 
 from algos.employee_tasks import assign_employee
 table_input_colums = {"product": "text", "activity_block_name": "text",
@@ -35,6 +35,7 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
 
     return update_table_from_upload(contents, filename, table_input_colums)
 
+table_export_format_factory('table_suggested_operator')
 
 @app.callback(
     Output('table_suggested_operator', 'data'),
@@ -192,6 +193,7 @@ layout = html.Div(id='pageContent2', children=[
     ),
     html.Hr(id="horizontalLine"),
     html.H3('Suggested activities for the operators'),
+    export_format_toggler,
     dash_table.DataTable(
         id='table_suggested_operator',
         columns=[
@@ -202,6 +204,8 @@ layout = html.Div(id='pageContent2', children=[
             {'id': 'operator_nb', 'name': 'operator'},
         ],
         sort_action="native",
+        export_format='csv',
+        export_headers='names'
     ),
     dcc.Graph(
         id='graph_suggested_operators',

@@ -9,8 +9,8 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
-from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products
-from views.functions_for_views.input_components import takt_time_input
+from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products, table_export_format_factory
+from views.functions_for_views.input_components import takt_time_input, export_format_toggler
 
 from algos.stations import assign_stations
 from algos.stations import activities_weighted_avg
@@ -45,6 +45,7 @@ def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, 
 def data_table_nb_products_stations(table_initial_stations, table_nb_products):
     return data_table_nb_products(table_initial_stations, table_nb_products)
 
+table_export_format_factory('table_suggested_order_stations')
 
 @app.callback(
     Output('table_suggested_order_stations', 'data'),
@@ -172,6 +173,7 @@ layout = html.Div(id='pageContent2',children=[
     ),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions',children=['Suggested stations of for the activity blocks on the production line']),
+    export_format_toggler,
     dash_table.DataTable(
         id='table_suggested_order_stations',
         columns=[
@@ -181,6 +183,8 @@ layout = html.Div(id='pageContent2',children=[
             {'id': 'station_nb', 'name': 'station_nb'}
         ],
         sort_action="native",
+        export_format='csv',
+        export_headers='names'
     ),
     dcc.Graph(
         id='graph_suggested_order_stations',
