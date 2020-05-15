@@ -71,7 +71,7 @@ def data_table_suggested_order(init_data):
         df_activities = df_activities.astype({"time": float})
     except ValueError:
         try:
-            df_activities['time'] = pd.to_timedelta(df_activities.time)
+            df_activities['time'] = pd.to_timedelta(df_activities.time).dt.total_seconds() / 60
         except ValueError:
             print("echec de conversion des durées")
             raise PreventUpdate
