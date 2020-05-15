@@ -36,6 +36,8 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
         raise PreventUpdate
     # create a list of time needed for each product
     df_activities = pd.DataFrame.from_records(init_data)
+    df_activities['product'] = df_activities['product'].str.strip()
+    df_activities['activity_block_name'] = df_activities['activity_block_name'].str.strip()
     df_activities.replace('', np.nan, inplace=True)
     df_activities.dropna(inplace=True)
     try:
