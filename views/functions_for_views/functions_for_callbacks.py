@@ -3,8 +3,29 @@ import io
 import pandas as pd
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
+from dash import callback_context
 from dash.dependencies import Input, Output, State
 from app import app
+
+
+def update_table_initial_factory(inital_table_id: str, uploader_id:str, add_row_botton: str, table_colums: dict):
+    @app.callback([Output(inital_table_id, 'columns'),
+                   Output(inital_table_id, 'data')],
+                  [Input(uploader_id, 'contents'),
+                   Input(add_row_botton, 'n_clicks')],
+                  [State(uploader_id, 'filename'),
+                   State(inital_table_id, 'data'),
+                   State(inital_table_id, 'columns')])
+    def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, columns):
+
+        # case we want to add a row
+        user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
+        if user_click and user_click == add_row_botton:
+            init_data.append({c['id']: '' for c in columns})
+            return [columns, init_data]
+        # case we upload data
+        return update_table_from_upload(contents, filename, table_colums)
+
 
 def update_table_from_upload(contents, filename, table_colums):
     if not filename:
@@ -25,11 +46,13 @@ def update_table_from_upload(contents, filename, table_colums):
         return html.Div([
             'There was an error processing this file.'
         ])
+        raise PreventUpdate
 
     df.columns = map(str.lower, df.columns)
     df = df[[column for column in table_colums.keys()]]
 
     return [[{'name': col.lower(), 'id': col.lower()} for col in df.columns], df.to_dict('records'), ]
+
 
 def data_table_nb_products_factory(table_nb_products_id: str, inital_table_id: str):
     @app.callback(
@@ -41,6 +64,7 @@ def data_table_nb_products_factory(table_nb_products_id: str, inital_table_id: s
         if not table_initial_stations:
             raise PreventUpdate
         df = pd.DataFrame.from_records(table_initial_stations)
+        df['product'] = df['product'].str.strip()
         if table_nb_products:
             df_nb_products = pd.DataFrame.from_records(table_nb_products)
             if set(df['product'].unique()) == set(df_nb_products['product'].unique()):
@@ -51,9 +75,10 @@ def data_table_nb_products_factory(table_nb_products_id: str, inital_table_id: s
         })
         return df_nb_products.to_dict('records')
 
+
 def table_export_format_factory(table_id: str):
     @app.callback(
-        Output(table_id , 'export_format'),
+        Output(table_id, 'export_format'),
         [Input('export_format_toggler', 'value')]
     )
     def table_export_format(toggler_value):

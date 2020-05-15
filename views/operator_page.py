@@ -1,7 +1,6 @@
 import datetime
 import numpy as np
 import pandas as pd
-from dash import callback_context
 from app import app
 import dash_core_components as dcc
 import dash_html_components as html
@@ -9,31 +8,18 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
-from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products_factory, table_export_format_factory
+from views.functions_for_views.functions_for_callbacks import (
+    update_table_from_upload,
+    data_table_nb_products_factory,
+    table_export_format_factory,
+    update_table_initial_factory)
 from views.functions_for_views.input_components import takt_time_input, export_format_toggler
 
 from algos.employee_tasks import assign_employee
 table_input_colums = {"product": "text", "activity_block_name": "text",
                       "activity_block_duration": "text", "station_nb": "numeric"}
 
-
-@app.callback([Output('table_initial_operators', 'columns'),
-               Output('table_initial_operators', 'data')],
-              [Input('upload_operator_data', 'contents'),
-               Input('add_operator_row', 'n_clicks')],
-              [State('upload_operator_data', 'filename'),
-               State('table_initial_operators', 'data'),
-               State('table_initial_operators', 'columns')])
-def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, columns):
-
-    # case we want to add a row
-    user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
-    if user_click and user_click == 'add_operator_row':
-        init_data.append({c['id']: '' for c in columns})
-        return [columns, init_data]
-    # case we upload data
-
-    return update_table_from_upload(contents, filename, table_input_colums)
+update_table_initial_factory('table_initial_operators', 'upload_operator_data', 'add_operator_row', table_input_colums)
 
 table_export_format_factory('table_suggested_operator')
 
@@ -80,7 +66,10 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
     suggested_operators = df_suggested.to_dict('rows')
     return suggested_operators
 
-data_table_nb_products_factory('table_nb_products_operator', 'table_initial_operators')
+
+data_table_nb_products_factory(
+    'table_nb_products_operator', 'table_initial_operators')
+
 
 @app.callback(
     Output('graph_suggested_operators', 'figure'),

@@ -1,7 +1,6 @@
 import datetime
 import numpy as np
 import pandas as pd
-from dash import callback_context
 from app import app
 import dash_core_components as dcc
 import dash_html_components as html
@@ -9,37 +8,23 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
-from views.functions_for_views.functions_for_callbacks import update_table_from_upload, data_table_nb_products_factory, table_export_format_factory
+from views.functions_for_views.functions_for_callbacks import (
+    update_table_from_upload,
+    data_table_nb_products_factory,
+    table_export_format_factory,
+    update_table_initial_factory)
 from views.functions_for_views.input_components import takt_time_input, export_format_toggler
-
 from algos.stations import assign_stations
-from algos.stations import activities_weighted_avg
 
 table_colums = {"product": "text", "activity_block_name": "text",
-                "activity_block_duration": "numeric", "min_sequence_rank": "text", "max_sequence_rank": "text"}
+                "activity_block_duration": "text", "min_sequence_rank": "text", "max_sequence_rank": "text"}
 
-
-@app.callback([Output('table_initial_stations', 'columns'),
-               Output('table_initial_stations', 'data')],
-              [Input('upload_station_data', 'contents'),
-               Input('add_sation_row', 'n_clicks')],
-              [State('upload_station_data', 'filename'),
-               State('table_initial_stations', 'data'),
-               State('table_initial_stations', 'columns')])
-def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, columns):
-
-    # case we want to add a row
-    user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
-    if user_click and user_click == 'add_sation_row':
-        init_data.append({c['id']: '' for c in columns})
-        return [columns, init_data]
-    # case we upload data
-    return update_table_from_upload(contents, filename, table_colums)
-
+update_table_initial_factory('table_initial_stations', 'upload_station_data', 'add_sation_row', table_colums)
 
 data_table_nb_products_factory('table_nb_products', 'table_initial_stations')
 
 table_export_format_factory('table_suggested_order_stations')
+
 
 @app.callback(
     Output('table_suggested_order_stations', 'data'),
@@ -51,16 +36,27 @@ table_export_format_factory('table_suggested_order_stations')
 def data_table_suggested_order(init_data, table_nb_products, nb_stations):
     if not init_data or not table_nb_products:
         raise PreventUpdate
-    # create a list of time needed for each product
+    df_activities = pd.DataFrame.from_records(init_data)
+    print(df_activities)
+    df_activities[['product', 'activity_block_name',
+                   'activity_block_duration']].replace('', np.nan, inplace=True)
+    df_activities['product'] = df_activities['product'].str.strip()
+    df_activities['activity_block_name'] = df_activities['activity_block_name'].str.strip()
+    df_activities.dropna(inplace=True, subset=[
+                         'product', 'activity_block_name', 'activity_block_duration'])
+    df_activities['activity_block_name'] = df_activities['activity_block_name'].str.strip()
     try:
-        activities = []
-        for row in init_data:
-            if '' not in (row['product'], row['activity_block_name'], row['activity_block_duration']):
-                row['activity_block_duration'] = float(
-                    row['activity_block_duration'])
-                activities.append(row)
-    except TypeError:
-        raise PreventUpdate
+        df_activities = df_activities.astype(
+            {"activity_block_duration": float})
+    except ValueError:
+        try:
+            df_activities['activity_block_duration'] = pd.to_timedelta(
+                df_activities.activity_block_duration)
+        except ValueError:
+            print("echec de conversion des durées")
+            raise PreventUpdate
+    print(df_activities)
+    activities = df_activities.to_records()
     suggested_stations = assign_stations(
         activities, table_nb_products, nb_stations)
     if not suggested_stations:
@@ -115,16 +111,18 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     return figure
 
 
-layout = html.Div(id='pageContent2',children=[
+layout = html.Div(id='pageContent2', children=[
     html.H1('Station Balancing page'),
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions',children=['enter the number of stations on the production line']),
+    html.Div(id='instructions', children=[
+             'enter the number of stations on the production line']),
     dcc.Input(id='nb_station_input', value=10, type='number',
               min=1, placeholder='number of stations'),
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions',children=['Enter the list of activities for the production']),
+    html.Div(id='instructions', children=[
+             'Enter the list of activities for the production']),
     dcc.Upload(id='upload_station_data',
                children=html.Div(
                    [
@@ -155,7 +153,8 @@ layout = html.Div(id='pageContent2',children=[
     ),
     html.Button('Add row', id='add_sation_row'),
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions',children=['Enter the list of product needed to be produced on the same line']),
+    html.Div(id='instructions', children=[
+             'Enter the list of product needed to be produced on the same line']),
     dash_table.DataTable(
         id='table_nb_products',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
@@ -166,7 +165,8 @@ layout = html.Div(id='pageContent2',children=[
         }]
     ),
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions',children=['Suggested stations of for the activity blocks on the production line']),
+    html.Div(id='instructions', children=[
+             'Suggested stations of for the activity blocks on the production line']),
     export_format_toggler,
     dash_table.DataTable(
         id='table_suggested_order_stations',

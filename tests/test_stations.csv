@@ -1,11 +1,10 @@
-product,activity_block_name,activity_block_duration,fixed_station_nb
+product,activity_block_name,activity_block_duration,fixed_station_nb,max_sequence_rank,min_sequence_rank
+"cabine type 1",motor,2,1,,
 "cabine type 1
-",motor,2,1
+",lights,4,2,,
 "cabine type 1
-",lights,4,2
+",roof,3,,,
 "cabine type 1
-",roof,3,
-"cabine type 1
-",doors,5,
+",doors,5,,,
 "cabine type 2
-",roof,3,
+",roof,3,,,
