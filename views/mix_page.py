@@ -171,13 +171,22 @@ layout = html.Div(id='pageContent2', children=[
                  for name, type in table_colums.items()],
         data=[],
         editable=True,
-        row_deletable=True
+        row_deletable=True,
+        style_cell={
+        'backgroundColor': 'white',
+        'color': 'black'   
+    },
+        style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+    },
     ),
     html.Button('Add row', id='add_button'),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
              'Suggested order of products on the production line']),
     export_format_toggler,
+    html.H1(''),
     dash_table.DataTable(
         id='table_suggested_order',
         columns=[
@@ -187,7 +196,15 @@ layout = html.Div(id='pageContent2', children=[
         ],
         sort_action="native",
         export_format='csv',
-        export_headers='names'
+        export_headers='names',
+        style_cell={
+        'backgroundColor': 'white',
+        'color': 'black'   
+    },
+        style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+    },
     ),
     dcc.Graph(
         id='graph_suggested_order',
