@@ -9,7 +9,6 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
 from views.functions_for_views.functions_for_callbacks import (
-    update_table_from_upload,
     data_table_nb_products_factory,
     table_export_format_factory,
     update_table_initial_factory)

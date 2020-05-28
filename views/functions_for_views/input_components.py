@@ -45,6 +45,8 @@ NavBar = html.Div(
                     children=[html.A('Operadores', id='operators_mix', href='/operator')]),
                 html.Li(children=[html.A('Mix de Produção',
                                          id='Production_mix', href='/mix')]),
+                html.Li(children=[html.A('actividades',
+                                         id='actividades', href='/actividades')]),
             ]),
     ])
 Footer = html.Div(
