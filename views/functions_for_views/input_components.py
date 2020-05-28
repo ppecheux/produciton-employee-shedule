@@ -27,6 +27,12 @@ takt_time_input = dbc.Row([
                             placeholder="operator efficiency: %", value=91, style={'width': 60}),
                   ]),
     ]),
+    dbc.Col([
+     html.Button('Change takt time', id='button'),
+      ]),
+    html.Hr(),
+    html.Div(id='output-container-button',
+             children='')
 ])
 NavBar = html.Div(
     id='header',
@@ -84,3 +90,5 @@ export_format_toggler = dbc.Row([
         html.Div("xlsx"), width=1
     )
 ])
+
+

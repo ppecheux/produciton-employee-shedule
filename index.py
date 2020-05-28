@@ -1,5 +1,6 @@
 import dash_core_components as dcc
 import dash_html_components as html
+import dash
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -93,6 +94,15 @@ def navBar_children(input1):
             justified=True)
     ]
     return DashboardNavItems
+
+@app.callback(
+    Output(component_id='output-container-button', component_property='children'),
+    [dash.dependencies.Input('button', 'n_clicks')],
+    [dash.dependencies.State('input_shift_duration_hour', 'value'),
+    dash.dependencies.State('input_operator_efficiency', 'value')],
+)
+def update_output_div(n_clicks,input_shift_duration_hour_value,input_operator_efficiency_value):
+    return 'Takt time will be calculated with the number of trucks to produce, but the vailable time per employee per day in minutes is now {}'.format(input_shift_duration_hour_value*60*input_operator_efficiency_value/100)
 
 
 if __name__ == '__main__':
