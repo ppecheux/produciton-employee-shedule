@@ -158,7 +158,16 @@ layout = html.Div(id='pageContent2', children=[
                  for name, type in table_input_colums.items()],
         data=[],
         editable=True,
-        row_deletable=True
+        row_deletable=True,
+        style_cell={
+        'backgroundColor': 'white',
+        'color': 'black'   
+    },
+        style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+    },
+
     ),
     html.Button('Add row', id='add_operator_row'),
     html.Hr(id="horizontalLine"),
@@ -168,14 +177,20 @@ layout = html.Div(id='pageContent2', children=[
         id='table_nb_products_operator',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
                  {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
-        style_data_conditional=[{
-            'if': {'column_id': 'product'},
-            'backgroundColor': '#f8f8f8',
-        }]
+                 style_cell={
+        'backgroundColor': 'white',
+        'color': 'black'   
+    },
+        style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+    },
+        
     ),
     html.Hr(id="horizontalLine"),
     html.H3('Suggested activities for the operators'),
     export_format_toggler,
+    html.H1(''),
     dash_table.DataTable(
         id='table_suggested_operator',
         columns=[
@@ -187,7 +202,16 @@ layout = html.Div(id='pageContent2', children=[
         ],
         sort_action="native",
         export_format='csv',
-        export_headers='names'
+        export_headers='names',
+        style_cell={
+        'backgroundColor': 'white',
+        'color': 'black'   
+    },
+        style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+    },
+
     ),
     dcc.Graph(
         id='graph_suggested_operators',
