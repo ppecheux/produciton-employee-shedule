@@ -11,4 +11,5 @@ with open('db/table_create_statement.sql','r') as fp:
     table_create_statement = fp.read()
 
 with engine.connect() as conn:
-    cursor = conn.execute(table_create_statement)
+    for stmt in table_create_statement.split(';'):
+        cursor = conn.execute(stmt)

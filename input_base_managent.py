@@ -38,6 +38,10 @@ def delete_Activity(product, activity_block_name):
     ).delete()
     db.session.commit()
 
+def delete_all_activies():
+    Activity.query.delete()
+    db.session.commit()
+
 def update_station_nb_Activity(product, activity_block_name, station_nb):
     Activity.query.filter_by(
         product=product,

@@ -1,17 +1,72 @@
 from app import app
 import dash_html_components as html
 import dash_core_components as dcc
-
+from dash import callback_context
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
+import pandas as pd
+import numpy as np
 from views.functions_for_views.functions_for_callbacks import (
     update_table_initial_factory
 )
+from input_base_managent import delete_all_activies, add_Activity
+from statsmodels.compat import cStringIO
+from config import engine
 
 table_input_colums = {"product": "text", "activity_block_name": "text",
                       "activity_block_duration": "text", "station_nb": "numeric"}
+
+@app.callback(Output('save', 'style'),
+              [Input('save', 'n_clicks'),
+               Input('table_initial_operators', 'data')],
+              )
+def save_activity_data(n_click, data):
+    if not n_click:
+        raise PreventUpdate
+    color = 'white'
+    user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
+    if user_click and user_click == 'save':
+        color = 'green'
+        # delete_all_activies()
+
+        df = pd.DataFrame.from_records(data)
+        df['product'] = df['product'].str.strip()
+        df['activity_block_name'] = df['activity_block_name'].str.strip()
+        df.replace('', np.nan, inplace=True)
+        df.dropna(
+            inplace=True,
+            subset=["product", "activity_block_name",
+                    "activity_block_duration"]
+        )
+        try:
+            df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(df.station_nb)].astype({"station_nb": int})
+        except ValueError:
+            print('the stations are not int')
+            raise PreventUpdate
+        try:
+            pd.to_numeric(df['activity_block_duration'])
+            df['activity_block_duration'] = df['activity_block_duration'] + ' min'
+        except ValueError:
+            pass
+
+        try:
+            df['activity_block_duration'] = pd.to_timedelta(
+                df.activity_block_duration)
+        except ValueError:
+            print("echec de conversion des durées")
+            raise PreventUpdate
+
+        print(df)
+        df.to_sql('activity', con=engine, if_exists='replace')
+
+    return {
+        'background-color': color,
+        '-webkit-transition': 'background-color 1000ms linear',
+        '- ms-transition': 'background-color 1000ms linear',
+    }
+
 
 layout = html.Div(id='pageContent2', children=[
     html.H1('Save your activities'),
@@ -74,5 +129,6 @@ layout = html.Div(id='pageContent2', children=[
         },
 
     ),
+    html.Button('Save', id='save'),
 
 ])
