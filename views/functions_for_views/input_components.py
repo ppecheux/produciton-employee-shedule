@@ -16,13 +16,13 @@ encoded_image3 = base64.b64encode(open(image3_filename, 'rb').read())
 
 takt_time_input = dbc.Row([
     dbc.Col([
-        html.Div(['shift duration in Hour : ',
+        html.Div(['Duração do turno em horas : ',
                           dcc.Input(id="input_shift_duration_hour", type='number',
                                     placeholder="shift duration: H", value=8, style={'width': 60}),
                           ]),
     ]),
     dbc.Col([
-        html.Div(['operator efficiency in % : ',
+        html.Div(['Eficiência do operator em % : ',
                   dcc.Input(id="input_operator_efficiency", type='number',
                             placeholder="operator efficiency: %", value=91, style={'width': 60}),
                   ]),
