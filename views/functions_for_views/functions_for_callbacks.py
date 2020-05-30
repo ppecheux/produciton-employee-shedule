@@ -87,3 +87,11 @@ def table_export_format_factory(table_id: str):
         return 'csv'
 
     return table_export_format
+
+def hide_show_factory(id_target: str):
+    @app.callback(
+        Output(id_target, 'hidden'),
+        [Input(id_target+'_toggler', 'value')]
+    )
+    def hide_show(toggler):
+        return toggler

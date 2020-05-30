@@ -11,16 +11,21 @@ import dash_table
 from views.functions_for_views.functions_for_callbacks import (
     data_table_nb_products_factory,
     table_export_format_factory,
-    update_table_initial_factory)
-from views.functions_for_views.input_components import takt_time_input, export_format_toggler
+    update_table_initial_factory,
+    hide_show_factory)
+from views.functions_for_views.input_components import takt_time_input, export_format_toggler, hidde_show_toggler
 
 from algos.employee_tasks import assign_employee
 table_input_colums = {"product": "text", "activity_block_name": "text",
                       "activity_block_duration": "text", "station_nb": "numeric"}
 
-update_table_initial_factory('table_initial_operators', 'upload_operator_data', 'add_operator_row', table_input_colums)
+update_table_initial_factory(
+    'table_initial_operators', 'upload_operator_data', 'add_operator_row', table_input_colums)
 
 table_export_format_factory('table_suggested_operator')
+
+hide_show_factory('input_data_table_div')
+
 
 @app.callback(
     Output('table_suggested_operator', 'data'),
@@ -127,48 +132,53 @@ layout = html.Div(id='pageContent2', children=[
     html.H1('Operator scheduling page'),
     html.H3('Change takt time by tweaking these parameters: '),
     takt_time_input,
+    html.Div([
+        hidde_show_toggler('input_data_table_div'),
+        "input data table"
+    ]),
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions', children=[
-             'Enter the list of activities for the production']),
-    dcc.Upload(id='upload_operator_data',
-               children=html.Div(
-                   [
-                       'Drag and Drop or ',
-                       html.A('Select File'),
-                       f' (csv or xls) \n must have {table_input_colums.keys()} columns'
-                   ]
-               ),
-               style={
-                   'width': '100%',
-                   'height': '60px',
-                   'lineHeight': '30px',
-                   'borderWidth': '1px',
-                   'borderStyle': 'dashed',
-                   'borderRadius': '5px',
-                   'textAlign': 'center',
-                   'margin-bottom': '50px'
-               },
-               ),
-    html.H3('OR'),
+    html.Div(id='input_data_table_div',
+             children=[
+                 'Enter the list of activities for the production',
+                 dcc.Upload(id='upload_operator_data',
+                            children=html.Div(
+                                [
+                                    '📁',
+                                    f' (csv or xls) \n must have {table_input_colums.keys()} columns'
+                                ]
+                            ),
+                            style={
+                                'width': '100%',
+                                'height': '60px',
+                                'lineHeight': '30px',
+                                'borderWidth': '1px',
+                                'borderStyle': 'dashed',
+                                'borderRadius': '5px',
+                                'textAlign': 'center',
+                                'margin-bottom': '50px'
+                            },
+                            ),
+                 html.H3('OR'),
 
-    dash_table.DataTable(
-        id='table_initial_operators',
-        columns=[{'id': name, 'name': name, 'type': type}
-                 for name, type in table_input_colums.items()],
-        data=[],
-        editable=True,
-        row_deletable=True,
-        style_cell={
-        'backgroundColor': 'white',
-        'color': 'black'   
-    },
-        style_header={
-        'backgroundColor': 'rgb(230, 230, 230)',
-        'fontWeight': 'bold'
-    },
+                 dash_table.DataTable(
+                     id='table_initial_operators',
+                     columns=[{'id': name, 'name': name, 'type': type}
+                              for name, type in table_input_colums.items()],
+                     data=[],
+                     editable=True,
+                     row_deletable=True,
+                     style_cell={
+                         'backgroundColor': 'white',
+                         'color': 'black'
+                     },
+                     style_header={
+                         'backgroundColor': 'rgb(230, 230, 230)',
+                         'fontWeight': 'bold'
+                     },
 
-    ),
-    html.Button('Add row', id='add_operator_row'),
+                 ),
+                 html.Button('Add row', id='add_operator_row'),
+             ]),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
              'Enter the quantity of product needed to be produced']),
@@ -176,15 +186,15 @@ layout = html.Div(id='pageContent2', children=[
         id='table_nb_products_operator',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
                  {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
-                 style_cell={
-        'backgroundColor': 'white',
-        'color': 'black'   
-    },
+        style_cell={
+            'backgroundColor': 'white',
+            'color': 'black'
+        },
         style_header={
-        'backgroundColor': 'rgb(230, 230, 230)',
-        'fontWeight': 'bold'
-    },
-        
+            'backgroundColor': 'rgb(230, 230, 230)',
+            'fontWeight': 'bold'
+        },
+
     ),
     html.Hr(id="horizontalLine"),
     html.H3('Suggested activities for the operators'),
@@ -203,13 +213,13 @@ layout = html.Div(id='pageContent2', children=[
         export_format='csv',
         export_headers='names',
         style_cell={
-        'backgroundColor': 'white',
-        'color': 'black'   
-    },
+            'backgroundColor': 'white',
+            'color': 'black'
+        },
         style_header={
-        'backgroundColor': 'rgb(230, 230, 230)',
-        'fontWeight': 'bold'
-    },
+            'backgroundColor': 'rgb(230, 230, 230)',
+            'fontWeight': 'bold'
+        },
 
     ),
     dcc.Graph(

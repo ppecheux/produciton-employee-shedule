@@ -11,7 +11,6 @@ class Activity(db.Model):
     activity_block_name = db.Column(db.String(80), primary_key=True)
     activity_block_duration = db.Column(db.Interval())
     station_nb =db.Column(db.Integer())
-    
 
 activityTable = Table('activity', Activity.metadata)
 

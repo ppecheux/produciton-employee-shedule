@@ -18,19 +18,18 @@ from config import engine
 table_input_colums = {"product": "text", "activity_block_name": "text",
                       "activity_block_duration": "text", "station_nb": "numeric"}
 
-@app.callback(Output('save', 'style'),
+@app.callback(Output('save', 'children'),
               [Input('save', 'n_clicks'),
                Input('table_initial_operators', 'data')],
               )
 def save_activity_data(n_click, data):
-    if not n_click:
+    if not n_click or not data:
         raise PreventUpdate
-    color = 'white'
+    saved = ''
     user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
     if user_click and user_click == 'save':
-        color = 'green'
+        saved = ' ✔️'
         # delete_all_activies()
-
         df = pd.DataFrame.from_records(data)
         df['product'] = df['product'].str.strip()
         df['activity_block_name'] = df['activity_block_name'].str.strip()
@@ -61,11 +60,7 @@ def save_activity_data(n_click, data):
         print(df)
         df.to_sql('activity', con=engine, if_exists='replace')
 
-    return {
-        'background-color': color,
-        '-webkit-transition': 'background-color 1000ms linear',
-        '- ms-transition': 'background-color 1000ms linear',
-    }
+    return "save" + saved
 
 
 layout = html.Div(id='pageContent2', children=[
