@@ -8,7 +8,7 @@ from dash.dependencies import Input, Output, State
 from app import app
 
 
-def update_table_initial_factory(inital_table_id: str, uploader_id:str, add_row_botton: str, table_colums: dict):
+def update_table_initial_factory(inital_table_id: str, uploader_id: str, add_row_botton: str, table_colums: dict):
     @app.callback([Output(inital_table_id, 'columns'),
                    Output(inital_table_id, 'data')],
                   [Input(uploader_id, 'contents'),
@@ -57,10 +57,11 @@ def update_table_from_upload(contents, filename, table_colums):
 def data_table_nb_products_factory(table_nb_products_id: str, inital_table_id: str):
     @app.callback(
         Output(table_nb_products_id, 'data'),
-        [Input(inital_table_id, 'data')],
+        [Input(inital_table_id, 'data'),
+         Input('url', 'href')],
         [State(table_nb_products_id, 'data')]
     )
-    def data_table_nb_products(table_initial_stations, table_nb_products):
+    def data_table_nb_products(table_initial_stations, href, table_nb_products):
         if not table_initial_stations:
             raise PreventUpdate
         df = pd.DataFrame.from_records(table_initial_stations)
@@ -87,6 +88,7 @@ def table_export_format_factory(table_id: str):
         return 'csv'
 
     return table_export_format
+
 
 def hide_show_factory(id_target: str):
     @app.callback(

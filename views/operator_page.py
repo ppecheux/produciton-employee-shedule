@@ -79,13 +79,17 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
 data_table_nb_products_factory(
     'table_nb_products_operator', 'table_initial_operators')
 
+
 def get_init_data_from_db():
     df = pd.read_sql_table(table_name="activity", con=engine)
     print(df)
-    df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(df.station_nb)].astype({"station_nb": int})
-    df['activity_block_duration'] = pd.to_timedelta(df['activity_block_duration']).astype({"activity_block_duration": str})
+    df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(
+        df.station_nb)].astype({"station_nb": int})
+    df['activity_block_duration'] = pd.to_timedelta(
+        df['activity_block_duration']).astype({"activity_block_duration": str})
     records = df[[c for c in table_input_colums]].to_dict('rows')
     return records
+
 
 @app.callback(
     Output('graph_suggested_operators', 'figure'),
@@ -154,7 +158,7 @@ layout = html.Div(id='pageContent2', children=[
                             children=html.Div(
                                 [
                                     '📁',
-                                    f' (csv or xls) \n must have {table_input_colums.keys()} columns'
+                                    f' (csv or xls) \n must have {", ".join((k for k in table_input_colums))} columns'
                                 ]
                             ),
                             style={
@@ -188,7 +192,8 @@ layout = html.Div(id='pageContent2', children=[
 
                  ),
                  html.Button('Add row', id='add_operator_row'),
-             ]),
+             ],
+             hidden=True),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
              'Enter the quantity of product needed to be produced']),

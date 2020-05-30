@@ -95,5 +95,6 @@ def hidde_show_toggler(id_target: str):
     return daq.ToggleSwitch(
         id = id_target+'_toggler',
         label='show',
-        labelPosition='bottom'
+        labelPosition='left',
+        value=True
     )
