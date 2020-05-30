@@ -13,7 +13,10 @@ from views.functions_for_views.functions_for_callbacks import (
     table_export_format_factory,
     update_table_initial_factory,
     hide_show_factory)
-from views.functions_for_views.input_components import takt_time_input, export_format_toggler, hidde_show_toggler
+from views.functions_for_views.input_components import (takt_time_input,
+                                                        export_format_toggler,
+                                                        hidde_show_toggler)
+from config import engine
 
 from algos.employee_tasks import assign_employee
 table_input_colums = {"product": "text", "activity_block_name": "text",
@@ -76,6 +79,13 @@ def data_table_suggested_order(init_data, table_nb_products, input_shift_duratio
 data_table_nb_products_factory(
     'table_nb_products_operator', 'table_initial_operators')
 
+def get_init_data_from_db():
+    df = pd.read_sql_table(table_name="activity", con=engine)
+    print(df)
+    df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(df.station_nb)].astype({"station_nb": int})
+    df['activity_block_duration'] = pd.to_timedelta(df['activity_block_duration']).astype({"activity_block_duration": str})
+    records = df[[c for c in table_input_colums]].to_dict('rows')
+    return records
 
 @app.callback(
     Output('graph_suggested_operators', 'figure'),
@@ -164,7 +174,7 @@ layout = html.Div(id='pageContent2', children=[
                      id='table_initial_operators',
                      columns=[{'id': name, 'name': name, 'type': type}
                               for name, type in table_input_colums.items()],
-                     data=[],
+                     data=get_init_data_from_db(),
                      editable=True,
                      row_deletable=True,
                      style_cell={
@@ -220,6 +230,7 @@ layout = html.Div(id='pageContent2', children=[
             'backgroundColor': 'rgb(230, 230, 230)',
             'fontWeight': 'bold'
         },
+
 
     ),
     dcc.Graph(
