@@ -143,8 +143,8 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 
 
 layout = html.Div(id='pageContent2', children=[
-    html.H1('Operator scheduling page'),
-    html.H3('Change takt time by tweaking these parameters: '),
+    html.H1('Página da Distribuição das Tarefas por Operadores'),
+    html.H3('Altere o takt time configurando estes parâmetros'),
     takt_time_input,
     html.Div([
         hidde_show_toggler('input_data_table_div'),
@@ -153,12 +153,12 @@ layout = html.Div(id='pageContent2', children=[
     html.Hr(id="horizontalLine"),
     html.Div(id='input_data_table_div',
              children=[
-                 'Enter the list of activities for the production',
+                 'Forneça a lista das atividades da produção',
                  dcc.Upload(id='upload_operator_data',
                             children=html.Div(
                                 [
                                     '📁',
-                                    f' (csv or xls) \n must have {", ".join((k for k in table_input_colums))} columns'
+                                    f' (csv or xls) \n Deve conter o cabeçalho : {", ".join((k for k in table_input_colums))} '
                                 ]
                             ),
                             style={
@@ -172,7 +172,7 @@ layout = html.Div(id='pageContent2', children=[
                                 'margin-bottom': '50px'
                             },
                             ),
-                 html.H3('OR'),
+                 html.H3('OU'),
 
                  dash_table.DataTable(
                      id='table_initial_operators',
@@ -191,12 +191,12 @@ layout = html.Div(id='pageContent2', children=[
                      },
 
                  ),
-                 html.Button('Add row', id='add_operator_row'),
+                 html.Button('adicionar linha', id='add_operator_row'),
              ],
              hidden=True),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
-             'Enter the quantity of product needed to be produced']),
+             'Forneça a quantidade de modelos a ser produzida']),
     dash_table.DataTable(
         id='table_nb_products_operator',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
@@ -212,7 +212,7 @@ layout = html.Div(id='pageContent2', children=[
 
     ),
     html.Hr(id="horizontalLine"),
-    html.H3('Suggested activities for the operators'),
+    html.H3('Sugestão de atividades para os operadores'),
     export_format_toggler,
     html.H1(''),
     dash_table.DataTable(
@@ -243,7 +243,7 @@ layout = html.Div(id='pageContent2', children=[
         figure={
             'layout': {
                 'title': 'total work duration in a day',
-                'xaxis': {'title': 'operator number'},
+                'xaxis': {'title': 'número do operador'},
                 'yaxis': {'title': 'operator duration in minutes'}
             }
         },

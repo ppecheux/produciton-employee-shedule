@@ -135,8 +135,8 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 
 
 layout = html.Div(id='pageContent2', children=[
-    html.H1('Station Balancing page'),
-    html.H3('Change takt time by tweaking these parameters: '),
+    html.H1('Página do Balanceamento de Estações'),
+    html.H3('Altere o takt time configurando estes parâmetros'),
     takt_time_input,
     html.Div([
         hidde_show_toggler('input_data_table_div'),
@@ -144,18 +144,18 @@ layout = html.Div(id='pageContent2', children=[
     ]),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
-             'Enter the number of stations on the production line']),
+             'Forneça o número de estações na linha de produção']),
     dcc.Input(id='nb_station_input', value=10, type='number',
               min=1, placeholder='number of stations'),
     html.Hr(id="horizontalLine"),
     html.Div(id='input_data_table_div',
              children=[
-                 'Enter the list of activities for the production',
+                 'Forneça a lista das atividades da produção',
                  dcc.Upload(id='upload_station_data',
                             children=html.Div(
                                 [
                                     '📁',
-                                    f' (csv or xls) \n must have {", ".join((k for k in table_colums))} columns'
+                                    f' (csv or xls) \n  Deve conter o cabeçalho : {", ".join((k for k in table_colums))} '
                                 ]
                             ),
                             style={
@@ -169,7 +169,7 @@ layout = html.Div(id='pageContent2', children=[
                                 'margin': '10px'
                             },
                             ),
-                 html.H3('OR'),
+                 html.H3('OU'),
                  dash_table.DataTable(
                      id='table_initial_stations',
                      columns=[{'id': name, 'name': name, 'type': type}
@@ -186,12 +186,12 @@ layout = html.Div(id='pageContent2', children=[
                          'fontWeight': 'bold'
                      },
                  ),
-                 html.Button('Add row', id='add_sation_row'),
+                 html.Button('adicionar linha', id='add_sation_row'),
              ],
              hidden=True),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
-             'Enter the list of product needed to be produced on the same line']),
+             'Forneça a lista de modelos a ser produzida na linha de produção']),
     dash_table.DataTable(
         id='table_nb_products',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
@@ -203,7 +203,7 @@ layout = html.Div(id='pageContent2', children=[
     ),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
-             'Suggested stations of for the activity blocks on the production line']),
+             'Estações sugeridas para os blocos de atividade da linha de produção']),
 
     export_format_toggler,
     html.H3(''),
@@ -234,8 +234,8 @@ layout = html.Div(id='pageContent2', children=[
         figure={
             'layout': {
                 'title': 'workload on stations',
-                'xaxis': {'title': 'station number'},
-                'yaxis': {'title': 'station duration'}
+                'xaxis': {'title': 'número da estação'},
+                'yaxis': {'title': 'duração da estação'}
             }
         },
         config={

@@ -78,7 +78,7 @@ Footer = html.Div(
 
 export_format_toggler = dbc.Row([
     dbc.Col(
-        html.Div("Export format: "), width=4, lg=2
+        html.Div("Formato para exportar"), width=4, lg=2
     ),
     dbc.Col(
         html.Div("csv"), width=1
