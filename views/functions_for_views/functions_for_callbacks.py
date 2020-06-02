@@ -92,8 +92,10 @@ def table_export_format_factory(table_id: str):
 
 def hide_show_factory(id_target: str):
     @app.callback(
-        Output(id_target, 'hidden'),
-        [Input(id_target+'_toggler', 'value')]
+        [Output(id_target, 'hidden'), Output(id_target+'_toggler', 'color')],
+        [Input(id_target+'_toggler', 'n_clicks')]
     )
-    def hide_show(toggler):
-        return toggler
+    def hide_show(n):
+        if n:
+            return n%2==0, ('secondary', 'info')[n%2]
+        raise PreventUpdate

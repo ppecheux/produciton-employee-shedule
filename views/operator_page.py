@@ -146,11 +146,8 @@ layout = html.Div(id='pageContent2', children=[
     html.H1('Página da Distribuição das Tarefas por Operadores'),
     html.H3('Altere o takt time configurando estes parâmetros'),
     takt_time_input,
-    html.Div([
-        hidde_show_toggler('input_data_table_div'),
-        "input data table"
-    ]),
     html.Hr(id="horizontalLine"),
+    hidde_show_toggler('input_data_table_div'),
     html.Div(id='input_data_table_div',
              children=[
                  'Forneça a lista das atividades da produção',

@@ -138,16 +138,13 @@ layout = html.Div(id='pageContent2', children=[
     html.H1('Página do Balanceamento de Estações'),
     html.H3('Altere o takt time configurando estes parâmetros'),
     takt_time_input,
-    html.Div([
-        hidde_show_toggler('input_data_table_div'),
-        "input data table"
-    ]),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
              'Forneça o número de estações na linha de produção']),
     dcc.Input(id='nb_station_input', value=10, type='number',
               min=1, placeholder='number of stations'),
     html.Hr(id="horizontalLine"),
+    hidde_show_toggler('input_data_table_div'),
     html.Div(id='input_data_table_div',
              children=[
                  'Forneça a lista das atividades da produção',
