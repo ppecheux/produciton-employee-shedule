@@ -82,7 +82,6 @@ data_table_nb_products_factory(
 
 def get_init_data_from_db():
     df = pd.read_sql_table(table_name="activity", con=engine)
-    print(df)
     df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(
         df.station_nb)].astype({"station_nb": int})
     df['activity_block_duration'] = pd.to_timedelta(

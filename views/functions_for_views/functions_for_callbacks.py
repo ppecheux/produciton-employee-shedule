@@ -6,6 +6,7 @@ from dash.exceptions import PreventUpdate
 from dash import callback_context
 from dash.dependencies import Input, Output, State
 from app import app
+import numpy as np
 
 
 def update_table_initial_factory(inital_table_id: str, uploader_id: str, add_row_botton: str, table_colums: dict):
@@ -49,6 +50,10 @@ def update_table_from_upload(contents, filename, table_colums):
         raise PreventUpdate
 
     df.columns = map(str.lower, df.columns)
+    columns_to_add = set(df.columns).symmetric_difference(set(table_colums.keys()))
+    print(columns_to_add)
+    for col in columns_to_add:
+        df[col] = ''
     df = df[[column for column in table_colums.keys()]]
 
     return [[{'name': col.lower(), 'id': col.lower()} for col in df.columns], df.to_dict('records'), ]

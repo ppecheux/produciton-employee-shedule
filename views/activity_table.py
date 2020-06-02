@@ -41,6 +41,7 @@ def save_activity_data(n_click, data):
             subset=["product", "activity_block_name",
                     "activity_block_duration"]
         )
+
         try:
             df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(
                 df.station_nb)].astype({"station_nb": int})
@@ -49,7 +50,7 @@ def save_activity_data(n_click, data):
             raise PreventUpdate
         try:
             pd.to_numeric(df['activity_block_duration'])
-            df['activity_block_duration'] = df['activity_block_duration'] + ' min'
+            df['activity_block_duration'] = df['activity_block_duration'].astype(str) + ' min'
         except ValueError:
             pass
 
@@ -65,6 +66,12 @@ def save_activity_data(n_click, data):
 
     return "save" + saved
 
+def get_init_data_from_db():
+    df = pd.read_sql_table(table_name="activity", con=engine)
+    df['activity_block_duration'] = pd.to_timedelta(
+        df['activity_block_duration']).astype({"activity_block_duration": str})
+    records = df[[c for c in table_input_colums]].to_dict('rows')
+    return records
 
 layout = html.Div(id='pageContent2', children=[
     html.H1('Save your activities'),
@@ -85,7 +92,7 @@ layout = html.Div(id='pageContent2', children=[
         id='table_initial_operators',
         columns=[{'id': name, 'name': name, 'type': type}
                  for name, type in table_input_colums.items()],
-        data=[],
+        data=pd.read_sql_table(table_name="activity", con=engine).to_dict("rows"),
         editable=True,
         row_deletable=True,
         style_cell={
@@ -98,24 +105,9 @@ layout = html.Div(id='pageContent2', children=[
         },
 
     ),
-    html.Button('Add row', id='add_operator_row'),
+    dbc.Button('Add row', id='add_operator_row'),
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions', children=[
-             'Enter the quantity of product needed to be produced']),
-    dash_table.DataTable(
-        id='table_nb_products_operator',
-        columns=[{'id': 'product', 'name': 'product', 'type': 'text'},
-                 {'id': 'quantity', 'name': 'quantity', 'type': 'numeric', 'editable': True}],
-        style_cell={
-            'backgroundColor': 'white',
-            'color': 'black'
-        },
-        style_header={
-            'backgroundColor': 'rgb(230, 230, 230)',
-            'fontWeight': 'bold'
-        },
 
-    ),
-    html.Button('Save', id='save'),
+    dbc.Button('Save', id='save'),
 
 ])
