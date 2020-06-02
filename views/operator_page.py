@@ -152,22 +152,12 @@ layout = html.Div(id='pageContent2', children=[
              children=[
                  'Forneça a lista das atividades da produção',
                  dcc.Upload(id='upload_operator_data',
-                            children=html.Div(
+                            children=dbc.Card(
                                 [
                                     '📁',
                                     f' (csv or xls) \n Deve conter o cabeçalho : {", ".join((k for k in table_input_colums))} '
                                 ]
                             ),
-                            style={
-                                'width': '100%',
-                                'height': '60px',
-                                'lineHeight': '30px',
-                                'borderWidth': '1px',
-                                'borderStyle': 'dashed',
-                                'borderRadius': '5px',
-                                'textAlign': 'center',
-                                'margin-bottom': '50px'
-                            },
                             ),
                  html.H3('OU'),
 

@@ -139,32 +139,24 @@ layout = html.Div(id='pageContent2', children=[
     html.H3('Altere o takt time configurando estes parâmetros'),
     takt_time_input,
     html.Hr(id="horizontalLine"),
-    html.Div(id='instructions', children=[
-             'Forneça o número de estações na linha de produção']),
-    dcc.Input(id='nb_station_input', value=10, type='number',
-              min=1, placeholder='number of stations'),
+    dbc.Card([
+        'Forneça o número de estações na linha de produção',
+        dcc.Input(id='nb_station_input', value=10, type='number',
+                  min=1, placeholder='number of stations'),
+    ],
+    style={"width": "30%", }),
     html.Hr(id="horizontalLine"),
     hidde_show_toggler('input_data_table_div'),
     html.Div(id='input_data_table_div',
              children=[
                  'Forneça a lista das atividades da produção',
                  dcc.Upload(id='upload_station_data',
-                            children=html.Div(
+                            children=dbc.Card(
                                 [
                                     '📁',
                                     f' (csv or xls) \n  Deve conter o cabeçalho : {", ".join((k for k in table_colums))} '
                                 ]
                             ),
-                            style={
-                                'width': '100%',
-                                'height': '60px',
-                                'lineHeight': '30px',
-                                'borderWidth': '1px',
-                                'borderStyle': 'dashed',
-                                'borderRadius': '5px',
-                                'textAlign': 'center',
-                                'margin': '10px'
-                            },
                             ),
                  html.H3('OU'),
                  dash_table.DataTable(

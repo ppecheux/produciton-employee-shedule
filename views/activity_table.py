@@ -14,9 +14,11 @@ from views.functions_for_views.functions_for_callbacks import (
 from input_base_managent import delete_all_activies, add_Activity
 from statsmodels.compat import cStringIO
 from config import engine
+from views.station_page import table_colums
+from views.operator_page import table_input_colums
 
-table_input_colums = {"product": "text", "activity_block_name": "text",
-                      "activity_block_duration": "text", "station_nb": "numeric"}
+table_input_colums.update(table_colums)
+
 
 @app.callback(Output('save', 'children'),
               [Input('save', 'n_clicks'),
@@ -40,7 +42,8 @@ def save_activity_data(n_click, data):
                     "activity_block_duration"]
         )
         try:
-            df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(df.station_nb)].astype({"station_nb": int})
+            df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(
+                df.station_nb)].astype({"station_nb": int})
         except ValueError:
             print('the stations are not int')
             raise PreventUpdate
@@ -69,23 +72,12 @@ layout = html.Div(id='pageContent2', children=[
     html.Div(id='instructions', children=[
              'Enter the list of activities for the production']),
     dcc.Upload(id='upload_operator_data',
-               children=html.Div(
+               children=dbc.Card(
                    [
-                       'Drag and Drop or ',
-                       html.A('Select File'),
-                       f' (csv or xls) \n must have {table_input_colums.keys()} columns'
+                       '📁',
+                       f' (csv or xls) \n Deve conter o cabeçalho : {", ".join((k for k in table_input_colums))} '
                    ]
                ),
-               style={
-                   'width': '100%',
-                   'height': '60px',
-                   'lineHeight': '30px',
-                   'borderWidth': '1px',
-                   'borderStyle': 'dashed',
-                   'borderRadius': '5px',
-                   'textAlign': 'center',
-                   'margin-bottom': '50px'
-               },
                ),
     html.H3('OR'),
 
