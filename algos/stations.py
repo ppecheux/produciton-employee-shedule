@@ -40,8 +40,9 @@ def fill_sequence_rank(df: pd.DataFrame) -> pd.DataFrame:
 def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> pd.DataFrame:
     df_weighted_avg['station_nb'] = [np.nan] * len(df_weighted_avg)
 
-    unique_ranks = sorted(list(set(df_weighted_avg['min_sequence_rank'].unique())
-                               | set(df_weighted_avg['max_sequence_rank'].unique())))
+    min_sequence_rank = set(df_weighted_avg['min_sequence_rank'].unique())
+    max_sequence_rank = set(df_weighted_avg['max_sequence_rank'].unique())
+    unique_ranks = sorted(list(min_sequence_rank | max_sequence_rank))
 
     # compute time per station:
     rest_production_duration = df_weighted_avg['weighted_average'].sum()

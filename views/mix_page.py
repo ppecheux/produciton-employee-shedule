@@ -138,20 +138,20 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 
 
 layout = html.Div(id='pageContent2', children=[
-    html.H1("Production Mix Page"),
+    html.H1("Página do Mix de Produção"),
     html.Br(),
-    html.H3('Change takt time by tweaking these parameters: '),
+    html.H3('Altere of takt time configurando estes parâmetros '),
     takt_time_input,
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
-             'List of products needed to be produced']),
+             'Lista de productos a serem produzidos']),
     dcc.Upload(
         id='upload_mix_data',
         children=html.Div(
             [
-                'Drag and Drop or ',
+                'Arraste e solte, ou selecione un arquivo ',
                 html.A('Select File'),
-                ' (csv or xls) \n must have name, time and quantity columns'
+                ' (csv or xls) \n deve ter as colunas modelo, tempo e quantitade'
             ]
         ),
         style={
@@ -171,31 +171,48 @@ layout = html.Div(id='pageContent2', children=[
                  for name, type in table_colums.items()],
         data=[],
         editable=True,
-        row_deletable=True
+        row_deletable=True,
+        style_cell={
+        'backgroundColor': 'white',
+        'color': 'black'   
+    },
+        style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+    },
     ),
-    html.Button('Add row', id='add_button'),
+    html.Button('Adicionar linha', id='add_button'),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
-             'Suggested order of products on the production line']),
+             'Ordem sugerida dos productos na linha de produção']),
     export_format_toggler,
+    html.H1(''),
     dash_table.DataTable(
         id='table_suggested_order',
         columns=[
-            {'id': 'name', 'name': 'name'},
-            {'id': 'time', 'name': 'time'},
-            {'id': 'cumulated_time', 'name': 'cumulated_time'}
+            {'id': 'name', 'name': 'modelo'},
+            {'id': 'time', 'name': 'tempo'},
+            {'id': 'cumulated_time', 'name': 'tempo acumulado'}
         ],
         sort_action="native",
         export_format='csv',
-        export_headers='names'
+        export_headers='names',
+        style_cell={
+        'backgroundColor': 'white',
+        'color': 'black'   
+    },
+        style_header={
+        'backgroundColor': 'rgb(230, 230, 230)',
+        'fontWeight': 'bold'
+    },
     ),
     dcc.Graph(
         id='graph_suggested_order',
         figure={
             'layout': {
-                'title': 'order of production visualization',
-                'xaxis': {'title': 'rank on the production line'},
-                'yaxis': {'title': 'production time'}
+                'title': 'Vizualização da ordem de produção',
+                'xaxis': {'title': 'Ordem da linha de produção'},
+                'yaxis': {'title': 'Tempo de produção'}
             }
         },
         config={

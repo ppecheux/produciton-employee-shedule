@@ -6,9 +6,10 @@ from dash.exceptions import PreventUpdate
 from dash import callback_context
 from dash.dependencies import Input, Output, State
 from app import app
+import numpy as np
 
 
-def update_table_initial_factory(inital_table_id: str, uploader_id:str, add_row_botton: str, table_colums: dict):
+def update_table_initial_factory(inital_table_id: str, uploader_id: str, add_row_botton: str, table_colums: dict):
     @app.callback([Output(inital_table_id, 'columns'),
                    Output(inital_table_id, 'data')],
                   [Input(uploader_id, 'contents'),
@@ -49,6 +50,9 @@ def update_table_from_upload(contents, filename, table_colums):
         raise PreventUpdate
 
     df.columns = map(str.lower, df.columns)
+    columns_to_add = set(table_colums.keys()) - set(df.columns)
+    for col in columns_to_add:
+        df[col] = ''
     df = df[[column for column in table_colums.keys()]]
 
     return [[{'name': col.lower(), 'id': col.lower()} for col in df.columns], df.to_dict('records'), ]
@@ -57,10 +61,11 @@ def update_table_from_upload(contents, filename, table_colums):
 def data_table_nb_products_factory(table_nb_products_id: str, inital_table_id: str):
     @app.callback(
         Output(table_nb_products_id, 'data'),
-        [Input(inital_table_id, 'data')],
+        [Input(inital_table_id, 'data'),
+         Input('url', 'href')],
         [State(table_nb_products_id, 'data')]
     )
-    def data_table_nb_products(table_initial_stations, table_nb_products):
+    def data_table_nb_products(table_initial_stations, href, table_nb_products):
         if not table_initial_stations:
             raise PreventUpdate
         df = pd.DataFrame.from_records(table_initial_stations)
@@ -87,3 +92,14 @@ def table_export_format_factory(table_id: str):
         return 'csv'
 
     return table_export_format
+
+
+def hide_show_factory(id_target: str):
+    @app.callback(
+        [Output(id_target, 'hidden'), Output(id_target+'_toggler', 'color')],
+        [Input(id_target+'_toggler', 'n_clicks')]
+    )
+    def hide_show(n):
+        if n:
+            return n%2==0, ('secondary', 'info')[n%2]
+        raise PreventUpdate

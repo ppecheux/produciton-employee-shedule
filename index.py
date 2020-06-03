@@ -1,15 +1,13 @@
 import dash_core_components as dcc
 import dash_html_components as html
+import dash
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 from app import app, server
-from flask_login import logout_user, current_user
 from views.functions_for_views.input_components import NavBar
 from views.functions_for_views.input_components import Footer
-from views import login, error, profile, user_admin, mix_page, success_login
-from views import mix_page, station_page, operator_page, homepage, tutorials
-
+from views import error, mix_page, station_page, operator_page, homepage, tutorials, activity_table
 from datetime import datetime as dt
 import sys
 
@@ -32,38 +30,12 @@ def displayPage(pathname):
     for pathname_dashboard, file in dashboard_pages.items():
         if pathname == pathname_dashboard and file:
             layout = file.layout
-            # if current_user.is_authenticated:
-            # else:
-            #     layout = login.layout
 
     if pathname == '/':
-        if current_user.is_authenticated:
-            layout = profile.layout
-        else:
-            layout = homepage.layout
+        layout = homepage.layout
 
-    elif pathname == '/logout':
-        if current_user.is_authenticated:
-            logout_user()
-        layout = login.layout
-
-    elif pathname == '/profile':
-        if current_user.is_authenticated:
-            layout = profile.layout
-        else:
-            layout = login.layout
-
-    elif pathname == '/admin':
-        if current_user.is_authenticated:
-            if current_user.admin:
-                layout = user_admin.layout
-            else:
-                layout = error.layout
-        else:
-            layout = login.layout
-
-    elif pathname == '/success_login':
-        layout = success_login.layout
+    elif pathname == '/actividades':
+        layout = activity_table.layout
 
     elif not layout:
         layout = error.layout
@@ -89,6 +61,15 @@ def navBar_children(input1):
             justified=True)
     ]
     return DashboardNavItems
+
+@app.callback(
+    Output(component_id='output-container-button', component_property='children'),
+    [dash.dependencies.Input('button', 'n_clicks')],
+    [dash.dependencies.State('input_shift_duration_hour', 'value'),
+    dash.dependencies.State('input_operator_efficiency', 'value')],
+)
+def update_output_div(n_clicks,input_shift_duration_hour_value,input_operator_efficiency_value):
+    return 'Takt time will be calculated with the number of trucks to produce, but the vailable time per employee per day in minutes is now {}'.format(input_shift_duration_hour_value*60*input_operator_efficiency_value/100)
 
 
 if __name__ == '__main__':

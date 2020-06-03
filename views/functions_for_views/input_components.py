@@ -16,17 +16,23 @@ encoded_image3 = base64.b64encode(open(image3_filename, 'rb').read())
 
 takt_time_input = dbc.Row([
     dbc.Col([
-        html.Div(['shift duration in Hour : ',
+        dbc.Card(['⏳Duração do turno em horas : ',
                           dcc.Input(id="input_shift_duration_hour", type='number',
-                                    placeholder="shift duration: H", value=8, style={'width': 60}),
+                                    placeholder="shift duration: H", value=8, style={'width': '100%'}),
                           ]),
     ]),
     dbc.Col([
-        html.Div(['operator efficiency in % : ',
+        dbc.Card(['👨🏼‍🏭 Eficiência do operator em % : ',
                   dcc.Input(id="input_operator_efficiency", type='number',
-                            placeholder="operator efficiency: %", value=91, style={'width': 60}),
+                            placeholder="operator efficiency: %", value=91, style={'width': '100%'}),
                   ]),
     ]),
+    dbc.Col([
+     dbc.Button('Change takt time', id='button'),
+      ]),
+    html.Hr(),
+    html.Div(id='output-container-button',
+             children='')
 ])
 NavBar = html.Div(
     id='header',
@@ -45,6 +51,8 @@ NavBar = html.Div(
                     children=[html.A('Operadores', id='operators_mix', href='/operator')]),
                 html.Li(children=[html.A('Mix de Produção',
                                          id='Production_mix', href='/mix')]),
+                html.Li(children=[html.A('actividades',
+                                         id='actividades', href='/actividades')]),
             ]),
     ])
 Footer = html.Div(
@@ -70,7 +78,7 @@ Footer = html.Div(
 
 export_format_toggler = dbc.Row([
     dbc.Col(
-        html.Div("Export format: "), width=4, lg=2
+        html.Div("Formato para exportar"), width=4, lg=2
     ),
     dbc.Col(
         html.Div("csv"), width=1
@@ -82,3 +90,9 @@ export_format_toggler = dbc.Row([
         html.Div("xlsx"), width=1
     )
 ])
+
+def hidde_show_toggler(id_target: str):
+    return dbc.Button(
+        id = id_target+'_toggler',
+        children='show input activities',
+    )
