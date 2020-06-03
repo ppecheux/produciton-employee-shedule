@@ -16,20 +16,20 @@ encoded_image3 = base64.b64encode(open(image3_filename, 'rb').read())
 
 takt_time_input = dbc.Row([
     dbc.Col([
-        dbc.Card(['⏳Duração do turno em horas : ',
+        html.Div(['Duração do turno em horas : ',
                           dcc.Input(id="input_shift_duration_hour", type='number',
-                                    placeholder="shift duration: H", value=8, style={'width': '100%'}),
+                                    placeholder="shift duration: H", value=8, style={'width': 60}),
                           ]),
     ]),
     dbc.Col([
-        dbc.Card(['👨🏼‍🏭 Eficiência do operator em % : ',
+        html.Div(['Eficiência do operator em % : ',
                   dcc.Input(id="input_operator_efficiency", type='number',
-                            placeholder="operator efficiency: %", value=91, style={'width': '100%'}),
+                            placeholder="operator efficiency: %", value=91, style={'width': 60}),
                   ]),
     ]),
     dbc.Col([
-        dbc.Button('Change takt time', id='button'),
-    ]),
+     html.Button('Change takt time', id='button'),
+      ]),
     html.Hr(),
     html.Div(id='output-container-button',
              children='')
@@ -44,7 +44,7 @@ NavBar = html.Div(
                 html.Img(
                     src='data:image/png;base64,{}'.format(encoded_image.decode())),
                 html.Li(
-                    children=[html.A('Tutorial', id='tutorial_page', href='/tutorial')]),
+                    children=[html.A('Tutorial', id='tutorial_page', href='/tutorials')]),
                 html.Li(
                     children=[html.A('Estações', id='station_mix', href='/station')]),
                 html.Li(
@@ -55,58 +55,6 @@ NavBar = html.Div(
                                          id='actividades', href='/actividades')]),
             ]),
     ])
-
-NavBar = dbc.Navbar(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    html.Img(
-                        src='data:image/png;base64,{}'.format(encoded_image.decode())),
-                ),
-                dbc.Col(
-                    dbc.NavItem(dbc.NavLink("Tutorial 1", href="#")),
-                ),
-                dbc.Col(
-                    dbc.NavItem(dbc.NavLink(
-                        'Estações', id='station_mix', href='/station')),
-                ),
-                dbc.Col(
-                    dbc.NavItem(dbc.NavLink(
-                        'Operadores', id='operators_mix', href='/operator')),
-                ),
-                dbc.Col(
-                    dbc.NavItem(dbc.NavLink('Mix de Produção',
-                                            id='Production_mix', href='/mix')),
-                ),
-                dbc.Col(
-                    dbc.NavItem(dbc.NavLink('actividades',
-                                            id='actividades', href='/actividades')),
-                ),
-            ]
-        )
-    ]
-)
-
-NavBar = dbc.NavbarSimple(
-    [
-        dbc.NavbarBrand(
-        html.Img(
-            src='data:image/png;base64,{}'.format(encoded_image.decode())),
-        ),
-        dbc.NavItem(dbc.NavLink("Tutorial 1", href="#")),
-        dbc.NavItem(dbc.NavLink(
-            'Estações', id='station_mix', href='/station')),
-        dbc.NavItem(dbc.NavLink(
-            'Operadores', id='operators_mix', href='/operator')),
-        dbc.NavItem(dbc.NavLink('Mix de Produção',
-                                id='Production_mix', href='/mix')),
-        dbc.NavItem(dbc.NavLink('actividades',
-                                id='actividades', href='/actividades')),
-
-    ]
-)
-
 Footer = html.Div(
     id='footer',
     children=[
@@ -143,9 +91,10 @@ export_format_toggler = dbc.Row([
     )
 ])
 
-
 def hidde_show_toggler(id_target: str):
-    return dbc.Button(
-        id=id_target+'_toggler',
-        children='show input activities',
+    return daq.ToggleSwitch(
+        id = id_target+'_toggler',
+        label='show',
+        labelPosition='left',
+        value=True
     )
