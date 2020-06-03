@@ -68,5 +68,4 @@ def show_activities():
         })
 
     conn.close()
-    print(activities)
     return activities

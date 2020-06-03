@@ -38,7 +38,6 @@ hide_show_factory('input_data_table_div')
      Input('input_operator_efficiency', 'value')],
 )
 def data_table_suggested_order(init_data, table_nb_products, input_shift_duration_hour, input_operator_efficiency):
-    print('in suggestion')
     if not init_data or not table_nb_products:
         raise PreventUpdate
     # create a list of time needed for each product

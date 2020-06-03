@@ -50,8 +50,7 @@ def update_table_from_upload(contents, filename, table_colums):
         raise PreventUpdate
 
     df.columns = map(str.lower, df.columns)
-    columns_to_add = set(df.columns).symmetric_difference(set(table_colums.keys()))
-    print(columns_to_add)
+    columns_to_add = set(table_colums.keys()) - set(df.columns)
     for col in columns_to_add:
         df[col] = ''
     df = df[[column for column in table_colums.keys()]]

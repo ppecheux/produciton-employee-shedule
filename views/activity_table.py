@@ -16,8 +16,8 @@ from statsmodels.compat import cStringIO
 from config import engine
 from views.station_page import table_colums
 from views.operator_page import table_input_colums
-
-table_input_colums.update(table_colums)
+table_activities_colums = table_input_colums.copy()
+table_activities_colums.update(table_colums)
 
 
 @app.callback(Output('save', 'children'),
@@ -61,7 +61,6 @@ def save_activity_data(n_click, data):
             print("echec de conversion des durées")
             raise PreventUpdate
 
-        print(df)
         df.to_sql('activity', con=engine, if_exists='replace')
 
     return "save" + saved
@@ -70,7 +69,7 @@ def get_init_data_from_db():
     df = pd.read_sql_table(table_name="activity", con=engine)
     df['activity_block_duration'] = pd.to_timedelta(
         df['activity_block_duration']).astype({"activity_block_duration": str})
-    records = df[[c for c in table_input_colums]].to_dict('rows')
+    records = df[[c for c in table_activities_colums]].to_dict('rows')
     return records
 
 layout = html.Div(id='pageContent2', children=[
@@ -82,7 +81,7 @@ layout = html.Div(id='pageContent2', children=[
                children=dbc.Card(
                    [
                        '📁',
-                       f' (csv or xls) \n Deve conter o cabeçalho : {", ".join((k for k in table_input_colums))} '
+                       f' (csv or xls) \n Deve conter o cabeçalho : {", ".join((k for k in table_activities_colums))} '
                    ]
                ),
                ),
@@ -91,7 +90,7 @@ layout = html.Div(id='pageContent2', children=[
     dash_table.DataTable(
         id='table_initial_operators',
         columns=[{'id': name, 'name': name, 'type': type}
-                 for name, type in table_input_colums.items()],
+                 for name, type in table_activities_colums.items()],
         data=pd.read_sql_table(table_name="activity", con=engine).to_dict("rows"),
         editable=True,
         row_deletable=True,

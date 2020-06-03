@@ -34,7 +34,6 @@ table_export_format_factory('table_suggested_order_stations')
 
 def get_init_data_from_db():
     df = pd.read_sql_table(table_name="activity", con=engine)
-    print(df)
     df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(
         df.station_nb)].astype({"station_nb": int})
     df['activity_block_duration'] = pd.to_timedelta(
@@ -56,7 +55,6 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
     if not init_data or not table_nb_products:
         raise PreventUpdate
     df_activities = pd.DataFrame.from_records(init_data)
-    print(df_activities)
     df_activities[['product', 'activity_block_name',
                    'activity_block_duration']].replace('', np.nan, inplace=True)
     df_activities['product'] = df_activities['product'].str.strip()
@@ -74,7 +72,8 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
         except ValueError:
             print("echec de conversion des durées")
             raise PreventUpdate
-    print(df_activities)
+    df_activities = df_activities.astype(
+        {"min_sequence_rank": str, "max_sequence_rank": str})
     activities = df_activities.to_records()
     suggested_stations = assign_stations(
         activities, table_nb_products, nb_stations)
