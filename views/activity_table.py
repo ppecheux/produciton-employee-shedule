@@ -12,7 +12,6 @@ from views.functions_for_views.functions_for_callbacks import (
     update_table_initial_factory
 )
 from input_base_managent import delete_all_activies, add_Activity
-from statsmodels.compat import cStringIO
 from config import engine
 from views.station_page import table_colums
 from views.operator_page import table_input_colums
