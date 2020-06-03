@@ -5,13 +5,9 @@ from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 from app import app, server
-from flask_login import logout_user, current_user
 from views.functions_for_views.input_components import NavBar
 from views.functions_for_views.input_components import Footer
-from views import login, error, profile, user_admin, mix_page, success_login
-from views import mix_page, station_page, operator_page, homepage, tutorials, activity_table
-
-
+from views import error, mix_page, station_page, operator_page, homepage, tutorials, activity_table
 from datetime import datetime as dt
 import sys
 
@@ -34,38 +30,9 @@ def displayPage(pathname):
     for pathname_dashboard, file in dashboard_pages.items():
         if pathname == pathname_dashboard and file:
             layout = file.layout
-            # if current_user.is_authenticated:
-            # else:
-            #     layout = login.layout
 
     if pathname == '/':
-        if current_user.is_authenticated:
-            layout = profile.layout
-        else:
-            layout = homepage.layout
-
-    elif pathname == '/logout':
-        if current_user.is_authenticated:
-            logout_user()
-        layout = login.layout
-
-    elif pathname == '/profile':
-        if current_user.is_authenticated:
-            layout = profile.layout
-        else:
-            layout = login.layout
-
-    elif pathname == '/admin':
-        if current_user.is_authenticated:
-            if current_user.admin:
-                layout = user_admin.layout
-            else:
-                layout = error.layout
-        else:
-            layout = login.layout
-
-    elif pathname == '/success_login':
-        layout = success_login.layout
+        layout = homepage.layout
 
     elif pathname == '/actividades':
         layout = activity_table.layout

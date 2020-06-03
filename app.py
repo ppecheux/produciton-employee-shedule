@@ -3,7 +3,7 @@ import dash
 # User management initialization
 import os
 from flask_login import LoginManager, UserMixin
-from users_mgt import db, User as base
+from input_base_managent import db
 from config import config
 import dash_bootstrap_components as dbc
 
@@ -25,14 +25,3 @@ db.init_app(server)
 login_manager = LoginManager()
 login_manager.init_app(server)
 login_manager.login_view = '/login'
-
-# Create User class with UserMixin
-
-
-class User(UserMixin, base):
-    pass
-
-# callback to reload the user object
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))

@@ -91,7 +91,7 @@ layout = html.Div(id='pageContent2', children=[
         id='table_initial_operators',
         columns=[{'id': name, 'name': name, 'type': type}
                  for name, type in table_activities_colums.items()],
-        data=pd.read_sql_table(table_name="activity", con=engine).to_dict("rows"),
+        data=get_init_data_from_db(),
         editable=True,
         row_deletable=True,
         style_cell={

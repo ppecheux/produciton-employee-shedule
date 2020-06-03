@@ -38,8 +38,6 @@ def get_init_data_from_db():
         df.station_nb)].astype({"station_nb": int})
     df['activity_block_duration'] = pd.to_timedelta(
         df['activity_block_duration']).astype({"activity_block_duration": str})
-    df['min_sequence_rank'] = np.nan
-    df['max_sequence_rank'] = np.nan
     records = df[[c for c in table_colums]].to_dict('rows')
     return records
 
