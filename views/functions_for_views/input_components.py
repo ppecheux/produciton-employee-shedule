@@ -28,8 +28,8 @@ takt_time_input = dbc.Row([
                   ]),
     ]),
     dbc.Col([
-     dbc.Button('Change takt time', id='button'),
-      ]),
+        dbc.Button('Change takt time', id='button'),
+    ]),
     html.Hr(),
     html.Div(id='output-container-button',
              children='')
@@ -55,6 +55,58 @@ NavBar = html.Div(
                                          id='actividades', href='/actividades')]),
             ]),
     ])
+
+NavBar = dbc.Navbar(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    html.Img(
+                        src='data:image/png;base64,{}'.format(encoded_image.decode())),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink("Tutorial 1", href="#")),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink(
+                        'Estações', id='station_mix', href='/station')),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink(
+                        'Operadores', id='operators_mix', href='/operator')),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink('Mix de Produção',
+                                            id='Production_mix', href='/mix')),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink('actividades',
+                                            id='actividades', href='/actividades')),
+                ),
+            ]
+        )
+    ]
+)
+
+NavBar = dbc.NavbarSimple(
+    [
+        dbc.NavbarBrand(
+        html.Img(
+            src='data:image/png;base64,{}'.format(encoded_image.decode())),
+        ),
+        dbc.NavItem(dbc.NavLink("Tutorial 1", href="#")),
+        dbc.NavItem(dbc.NavLink(
+            'Estações', id='station_mix', href='/station')),
+        dbc.NavItem(dbc.NavLink(
+            'Operadores', id='operators_mix', href='/operator')),
+        dbc.NavItem(dbc.NavLink('Mix de Produção',
+                                id='Production_mix', href='/mix')),
+        dbc.NavItem(dbc.NavLink('actividades',
+                                id='actividades', href='/actividades')),
+
+    ]
+)
+
 Footer = html.Div(
     id='footer',
     children=[
@@ -91,8 +143,9 @@ export_format_toggler = dbc.Row([
     )
 ])
 
+
 def hidde_show_toggler(id_target: str):
     return dbc.Button(
-        id = id_target+'_toggler',
+        id=id_target+'_toggler',
         children='show input activities',
     )
