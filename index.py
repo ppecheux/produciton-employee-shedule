@@ -69,7 +69,7 @@ def navBar_children(input1):
     dash.dependencies.State('input_operator_efficiency', 'value')],
 )
 def update_output_div(n_clicks,input_shift_duration_hour_value,input_operator_efficiency_value):
-    return 'Takt time will be calculated with the number of trucks to produce, but the vailable time per employee per day in minutes is now {}'.format(input_shift_duration_hour_value*60*input_operator_efficiency_value/100)
+    return 'The amount of time worked per employee per day is now {} minutes'.format(input_shift_duration_hour_value*60*input_operator_efficiency_value/100 )
 
 
 if __name__ == '__main__':

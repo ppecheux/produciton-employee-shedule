@@ -14,7 +14,8 @@ encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 encoded_image2 = base64.b64encode(open(image2_filename, 'rb').read())
 encoded_image3 = base64.b64encode(open(image3_filename, 'rb').read())
 
-takt_time_input = dbc.Row([
+takt_time_input = html.Div(children=[
+dbc.Row([
     dbc.Col([
         html.Div(['Duração do turno em horas : ',
                           dcc.Input(id="input_shift_duration_hour", type='number',
@@ -28,11 +29,12 @@ takt_time_input = dbc.Row([
                   ]),
     ]),
     dbc.Col([
-     html.Button('Change takt time', id='button'),
+     html.Button('Change work duration', id='button'),
       ]),
-    html.Hr(),
+    ]),
+    html.Br(),
     html.Div(id='output-container-button',
-             children='')
+             children=''),
 ])
 NavBar = html.Div(
     id='header',
