@@ -227,9 +227,9 @@ layout = html.Div(id='pageContent2', children=[
         id='graph_suggested_operators',
         figure={
             'layout': {
-                'title': 'total work duration in a day',
+                'title': 'Trabalho Total Durante um Dia',
                 'xaxis': {'title': 'número do operador'},
-                'yaxis': {'title': 'operator duration in minutes'}
+                'yaxis': {'title': 'Duração do trabalho do operador em minutos'}
             }
         },
         config={

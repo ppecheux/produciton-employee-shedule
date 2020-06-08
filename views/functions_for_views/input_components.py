@@ -29,7 +29,7 @@ dbc.Row([
                   ]),
     ]),
     dbc.Col([
-     html.Button('Change work duration', id='button'),
+     html.Button('Alterar Takt Time', id='button'),
       ]),
     ]),
     html.Br(),
@@ -53,7 +53,7 @@ NavBar = html.Div(
                     children=[html.A('Operadores', id='operators_mix', href='/operator')]),
                 html.Li(children=[html.A('Mix de Produção',
                                          id='Production_mix', href='/mix')]),
-                html.Li(children=[html.A('actividades',
+                html.Li(children=[html.A('Atividades',
                                          id='actividades', href='/actividades')]),
             ]),
     ])
@@ -96,7 +96,7 @@ export_format_toggler = dbc.Row([
 def hidde_show_toggler(id_target: str):
     return daq.ToggleSwitch(
         id = id_target+'_toggler',
-        label='show',
+        label='mostrar entrada de atividades',
         labelPosition='left',
         value=True
     )

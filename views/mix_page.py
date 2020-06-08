@@ -140,7 +140,7 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
 layout = html.Div(id='pageContent2', children=[
     html.H1("Página do Mix de Produção"),
     html.Br(),
-    html.H3('Altere of takt time configurando estes parâmetros '),
+    html.H3('Altere o takt time configurando estes parâmetros '),
     takt_time_input,
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[

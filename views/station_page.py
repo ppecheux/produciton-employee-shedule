@@ -219,7 +219,7 @@ layout = html.Div(id='pageContent2', children=[
         id='graph_suggested_order_stations',
         figure={
             'layout': {
-                'title': 'workload on stations',
+                'title': 'Carga de Trabalho nas Estações',
                 'xaxis': {'title': 'número da estação'},
                 'yaxis': {'title': 'duração da estação'}
             }

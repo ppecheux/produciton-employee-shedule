@@ -72,10 +72,10 @@ def get_init_data_from_db():
     return records
 
 layout = html.Div(id='pageContent2', children=[
-    html.H1('Save your activities'),
+    html.H1('Salve suas atividades'),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
-             'Enter the list of activities for the production']),
+             'Forneça a lista das atividades da produção']),
     dcc.Upload(id='upload_operator_data',
                children=dbc.Card(
                    [
@@ -84,7 +84,7 @@ layout = html.Div(id='pageContent2', children=[
                    ]
                ),
                ),
-    html.H3('OR'),
+    html.H3('OU'),
 
     dash_table.DataTable(
         id='table_initial_operators',
@@ -103,9 +103,9 @@ layout = html.Div(id='pageContent2', children=[
         },
 
     ),
-    dbc.Button('Add row', id='add_operator_row'),
+    dbc.Button('adicionar linha', id='add_operator_row'),
     html.Hr(id="horizontalLine"),
 
-    dbc.Button('Save', id='save'),
+    dbc.Button('Salvar', id='save'),
 
 ])
