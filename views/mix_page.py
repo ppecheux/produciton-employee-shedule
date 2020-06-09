@@ -147,23 +147,12 @@ layout = html.Div(id='pageContent2', children=[
              'Lista de productos a serem produzidos']),
     dcc.Upload(
         id='upload_mix_data',
-        children=html.Div(
-            [
-                'Arraste e solte, ou selecione un arquivo ',
-                html.A('Select File'),
-                ' (csv or xls) \n deve ter as colunas modelo, tempo e quantitade'
-            ]
-        ),
-        style={
-            'width': '100%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
-        },
+                            children=dbc.Card(
+                                [
+                                    '📁',
+                                    f' (csv or xls) \n Deve conter o cabeçalho : {", ".join((k for k in table_colums))} '
+                                ]
+                            ),
     ),
     dash_table.DataTable(
         id='table_initial_quantity_time',

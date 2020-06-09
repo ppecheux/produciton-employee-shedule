@@ -144,7 +144,7 @@ layout = html.Div(id='pageContent2', children=[
     html.H1('Página da Distribuição das Tarefas por Operadores'),
     html.H3('Altere o takt time configurando estes parâmetros'),
     takt_time_input,
-    html.Hr(id="horizontalLine"),
+    html.Hr(),
     hidde_show_toggler('input_data_table_div'),
     html.Div(id='input_data_table_div',
              children=[
@@ -179,9 +179,10 @@ layout = html.Div(id='pageContent2', children=[
                  html.Button('adicionar linha', id='add_operator_row'),
              ],
              hidden=True),
-    html.Hr(id="horizontalLine"),
-    html.Div(id='instructions', children=[
-             'Forneça a quantidade de modelos a ser produzida']),
+
+    html.Div(children=[
+            html.Hr(),
+            'Forneça a quantidade de modelos a ser produzida']),
     dash_table.DataTable(
         id='table_nb_products_operator',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},

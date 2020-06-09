@@ -135,14 +135,14 @@ layout = html.Div(id='pageContent2', children=[
     html.H1('Página do Balanceamento de Estações'),
     html.H3('Altere o takt time configurando estes parâmetros'),
     takt_time_input,
-    html.Hr(id="horizontalLine"),
+    html.Hr(),
     dbc.Card([
         'Forneça o número de estações na linha de produção',
         dcc.Input(id='nb_station_input', value=10, type='number',
                   min=1, placeholder='number of stations'),
     ],
-    style={"width": "30%", }),
-    html.Hr(id="horizontalLine"),
+        style={"width": "30%", }),
+    html.Hr(),
     hidde_show_toggler('input_data_table_div'),
     html.Div(id='input_data_table_div',
              children=[
@@ -175,9 +175,10 @@ layout = html.Div(id='pageContent2', children=[
                  html.Button('adicionar linha', id='add_sation_row'),
              ],
              hidden=True),
-    html.Hr(id="horizontalLine"),
-    html.Div(id='instructions', children=[
-             'Forneça a lista de modelos a ser produzida na linha de produção']),
+
+    html.Div(children=[
+        html.Hr(),
+        'Forneça a lista de modelos a ser produzida na linha de produção']),
     dash_table.DataTable(
         id='table_nb_products',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},

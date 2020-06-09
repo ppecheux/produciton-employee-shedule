@@ -1,4 +1,3 @@
-
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
@@ -14,27 +13,25 @@ encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 encoded_image2 = base64.b64encode(open(image2_filename, 'rb').read())
 encoded_image3 = base64.b64encode(open(image3_filename, 'rb').read())
 
-takt_time_input = html.Div(children=[
-dbc.Row([
+takt_time_input = dbc.Row([
     dbc.Col([
-        html.Div(['Duração do turno em horas : ',
+        dbc.Card(['⏳Duração do turno em horas : ',
                           dcc.Input(id="input_shift_duration_hour", type='number',
-                                    placeholder="shift duration: H", value=8, style={'width': 60}),
+                                    placeholder="shift duration: H", value=8, style={'width': '100%'}),
                           ]),
     ]),
     dbc.Col([
-        html.Div(['Eficiência do operator em % : ',
+        dbc.Card(['👨🏼‍🏭 Eficiência do operator em % : ',
                   dcc.Input(id="input_operator_efficiency", type='number',
-                            placeholder="operator efficiency: %", value=91, style={'width': 60}),
+                            placeholder="operator efficiency: %", value=91, style={'width': '100%'}),
                   ]),
     ]),
     dbc.Col([
-     html.Button('Alterar Takt Time', id='button'),
-      ]),
+        dbc.Button('Alterar Takt Time', id='button'),
     ]),
-    html.Br(),
+    html.Hr(),
     html.Div(id='output-container-button',
-             children=''),
+             children='')
 ])
 NavBar = html.Div(
     id='header',
@@ -46,17 +43,69 @@ NavBar = html.Div(
                 html.Img(
                     src='data:image/png;base64,{}'.format(encoded_image.decode())),
                 html.Li(
-                    children=[html.A('Tutorial', id='tutorial_page', href='/tutorials')]),
+                    children=[html.A('Tutorial', id='tutorial_page', href='/tutorial')]),
                 html.Li(
                     children=[html.A('Estações', id='station_mix', href='/station')]),
                 html.Li(
                     children=[html.A('Operadores', id='operators_mix', href='/operator')]),
                 html.Li(children=[html.A('Mix de Produção',
                                          id='Production_mix', href='/mix')]),
-                html.Li(children=[html.A('Atividades',
+                html.Li(children=[html.A('actividades',
                                          id='actividades', href='/actividades')]),
             ]),
     ])
+
+NavBar = dbc.Navbar(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    html.Img(
+                        src='data:image/png;base64,{}'.format(encoded_image.decode())),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink("Tutorial 1", href="#")),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink(
+                        'Estações', id='station_mix', href='/station')),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink(
+                        'Operadores', id='operators_mix', href='/operator')),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink('Mix de Produção',
+                                            id='Production_mix', href='/mix')),
+                ),
+                dbc.Col(
+                    dbc.NavItem(dbc.NavLink('actividades',
+                                            id='actividades', href='/actividades')),
+                ),
+            ]
+        )
+    ]
+)
+
+NavBar = dbc.NavbarSimple(
+    [
+        dbc.NavbarBrand(
+        html.Img(
+            src='data:image/png;base64,{}'.format(encoded_image.decode())),
+        ),
+        dbc.NavItem(dbc.NavLink("Tutorial 1", href="#")),
+        dbc.NavItem(dbc.NavLink(
+            'Estações', id='station_mix', href='/station')),
+        dbc.NavItem(dbc.NavLink(
+            'Operadores', id='operators_mix', href='/operator')),
+        dbc.NavItem(dbc.NavLink('Mix de Produção',
+                                id='Production_mix', href='/mix')),
+        dbc.NavItem(dbc.NavLink('Atividades',
+                                id='actividades', href='/actividades')),
+
+    ]
+)
+
 Footer = html.Div(
     id='footer',
     children=[
@@ -93,10 +142,9 @@ export_format_toggler = dbc.Row([
     )
 ])
 
+
 def hidde_show_toggler(id_target: str):
-    return daq.ToggleSwitch(
-        id = id_target+'_toggler',
-        label='mostrar entrada de atividades',
-        labelPosition='left',
-        value=True
+    return dbc.Button(
+        id=id_target+'_toggler',
+        children='mostrar entrada de atividades',
     )
