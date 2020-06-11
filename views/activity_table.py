@@ -9,10 +9,11 @@ import dash_table
 import pandas as pd
 import numpy as np
 from views.functions_for_views.functions_for_callbacks import (
-    update_table_initial_factory
+    update_table_initial_factory,
+    get_init_data_from_db_factory,
 )
 from input_base_managent import delete_all_activies, add_Activity
-from config import engine
+from config import engine, session
 from views.station_page import table_colums
 from views.operator_page import table_input_colums
 table_activities_colums = table_input_colums.copy()
@@ -21,7 +22,7 @@ table_activities_colums.update(table_colums)
 
 @app.callback(Output('save', 'children'),
               [Input('save', 'n_clicks'),
-               Input('table_initial_operators', 'data')],
+               Input('table_initial_activities', 'data')],
               )
 def save_activity_data(n_click, data):
     if not n_click or not data:
@@ -49,7 +50,8 @@ def save_activity_data(n_click, data):
             raise PreventUpdate
         try:
             pd.to_numeric(df['activity_block_duration'])
-            df['activity_block_duration'] = df['activity_block_duration'].astype(str) + ' min'
+            df['activity_block_duration'] = df['activity_block_duration'].astype(
+                str) + ' min'
         except ValueError:
             pass
 
@@ -60,23 +62,27 @@ def save_activity_data(n_click, data):
             print("echec de conversion des durées")
             raise PreventUpdate
 
-        df.to_sql('activity', con=engine, if_exists='replace')
+        df.to_sql('activity', con=session.get_bind(), if_exists='replace')
+        df = pd.read_sql_table(table_name="activity", con=engine)
 
     return "save" + saved
 
-def get_init_data_from_db():
-    df = pd.read_sql_table(table_name="activity", con=engine)
-    df['activity_block_duration'] = pd.to_timedelta(
-        df['activity_block_duration']).astype({"activity_block_duration": str})
-    records = df[[c for c in table_activities_colums]].to_dict('rows')
-    return records
+
+get_init_data = get_init_data_from_db_factory(table_activities_colums)
+
+update_table_initial_factory("table_initial_activities",
+                             "upload_activities",
+                             "add_activity_row",
+                             "load_from_db",
+                             table_activities_colums)
 
 layout = html.Div(id='pageContent2', children=[
     html.H1('Salve suas atividades'),
     html.Hr(id="horizontalLine"),
     html.Div(id='instructions', children=[
              'Forneça a lista das atividades da produção']),
-    dcc.Upload(id='upload_operator_data',
+    dbc.Button(id="load_from_db", children="load data from db"),
+    dcc.Upload(id='upload_activities',
                children=dbc.Card(
                    [
                        '📁',
@@ -87,10 +93,10 @@ layout = html.Div(id='pageContent2', children=[
     html.H3('OU'),
 
     dash_table.DataTable(
-        id='table_initial_operators',
+        id='table_initial_activities',
         columns=[{'id': name, 'name': name, 'type': type}
                  for name, type in table_activities_colums.items()],
-        data=get_init_data_from_db(),
+        data=get_init_data(),
         editable=True,
         row_deletable=True,
         style_cell={
@@ -103,7 +109,7 @@ layout = html.Div(id='pageContent2', children=[
         },
 
     ),
-    dbc.Button('adicionar linha', id='add_operator_row'),
+    dbc.Button('adicionar linha', id='add_activity_row'),
     html.Hr(id="horizontalLine"),
 
     dbc.Button('Salvar', id='save'),

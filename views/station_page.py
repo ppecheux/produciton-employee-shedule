@@ -13,7 +13,8 @@ from views.functions_for_views.functions_for_callbacks import (
     data_table_nb_products_factory,
     table_export_format_factory,
     update_table_initial_factory,
-    hide_show_factory)
+    hide_show_factory,
+    get_init_data_from_db_factory)
 from views.functions_for_views.input_components import (
     takt_time_input,
     export_format_toggler,
@@ -25,21 +26,13 @@ table_colums = {"product": "text", "activity_block_name": "text",
                 "activity_block_duration": "text", "min_sequence_rank": "text", "max_sequence_rank": "text"}
 
 update_table_initial_factory(
-    'table_initial_stations', 'upload_station_data', 'add_sation_row', table_colums)
+    'table_initial_stations', 'upload_station_data', 'add_sation_row', "load_from_db_station", table_colums)
 
 data_table_nb_products_factory('table_nb_products', 'table_initial_stations')
 
 table_export_format_factory('table_suggested_order_stations')
 
-
-def get_init_data_from_db():
-    df = pd.read_sql_table(table_name="activity", con=engine)
-    df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(
-        df.station_nb)].astype({"station_nb": int})
-    df['activity_block_duration'] = pd.to_timedelta(
-        df['activity_block_duration']).astype({"activity_block_duration": str})
-    records = df[[c for c in table_colums]].to_dict('rows')
-    return records
+get_init_data_from_db_factory(table_colums)
 
 
 @app.callback(
@@ -147,6 +140,10 @@ layout = html.Div(id='pageContent2', children=[
     html.Div(id='input_data_table_div',
              children=[
                  'Forneça a lista das atividades da produção',
+                 html.Div(
+                     dbc.Button(id="load_from_db_station",
+                                children="load data from db"),
+                 ),
                  dcc.Upload(id='upload_station_data',
                             children=dbc.Card(
                                 [
@@ -160,7 +157,7 @@ layout = html.Div(id='pageContent2', children=[
                      id='table_initial_stations',
                      columns=[{'id': name, 'name': name, 'type': type}
                               for name, type in table_colums.items()],
-                     data=get_init_data_from_db(),
+                     data=get_init_data_from_db_factory(table_colums)(),
                      editable=True,
                      row_deletable=True,
                      style_cell={

@@ -23,7 +23,7 @@ table_input_colums = {"product": "text", "activity_block_name": "text",
                       "activity_block_duration": "text", "station_nb": "numeric"}
 
 update_table_initial_factory(
-    'table_initial_operators', 'upload_operator_data', 'add_operator_row', table_input_colums)
+    'table_initial_operators', 'upload_operator_data', 'add_operator_row', "load_from_db_operator", table_input_colums)
 
 table_export_format_factory('table_suggested_operator')
 
@@ -149,6 +149,10 @@ layout = html.Div(id='pageContent2', children=[
     html.Div(id='input_data_table_div',
              children=[
                  'Forneça a lista das atividades da produção',
+                 html.Div(
+                     dbc.Button(id="load_from_db_operator",
+                                children="load data from db"),
+                 ),
                  dcc.Upload(id='upload_operator_data',
                             children=dbc.Card(
                                 [
@@ -181,8 +185,8 @@ layout = html.Div(id='pageContent2', children=[
              hidden=True),
 
     html.Div(children=[
-            html.Hr(),
-            'Forneça a quantidade de modelos a ser produzida']),
+        html.Hr(),
+        'Forneça a quantidade de modelos a ser produzida']),
     dash_table.DataTable(
         id='table_nb_products_operator',
         columns=[{'id': 'product', 'name': 'product', 'type': 'text'},

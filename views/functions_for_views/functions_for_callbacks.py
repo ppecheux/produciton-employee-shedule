@@ -7,23 +7,29 @@ from dash import callback_context
 from dash.dependencies import Input, Output, State
 from app import app
 import numpy as np
+from config import engine
 
 
-def update_table_initial_factory(inital_table_id: str, uploader_id: str, add_row_botton: str, table_colums: dict):
+def update_table_initial_factory(inital_table_id: str, uploader_id: str, add_row_botton: str, load_db_btn: str, table_colums: dict,  ):
     @app.callback([Output(inital_table_id, 'columns'),
                    Output(inital_table_id, 'data')],
                   [Input(uploader_id, 'contents'),
-                   Input(add_row_botton, 'n_clicks')],
+                   Input(add_row_botton, 'n_clicks'),
+                   Input(load_db_btn, 'n_clicks')],
                   [State(uploader_id, 'filename'),
                    State(inital_table_id, 'data'),
                    State(inital_table_id, 'columns')])
-    def update_table_initial_quantity_time(contents, n_clicks, filename, init_data, columns):
+    def update_table_initial_quantity_time(contents, clicks_row, clicks_laod, filename, init_data, columns):
 
-        # case we want to add a row
         user_click = callback_context.triggered[0]['prop_id'].split('.')[0]
-        if user_click and user_click == add_row_botton:
-            init_data.append({c['id']: '' for c in columns})
-            return [columns, init_data]
+        if user_click:
+        # case we want to add a row
+            if user_click == add_row_botton:
+                init_data.append({c['id']: '' for c in columns})
+                return [columns, init_data]
+        # case we want to upload data
+            elif user_click == load_db_btn:
+                return [columns, get_init_data_from_db_factory(table_colums)()]        
         # case we upload data
         return update_table_from_upload(contents, filename, table_colums)
 
@@ -49,11 +55,14 @@ def update_table_from_upload(contents, filename, table_colums):
         ])
         raise PreventUpdate
 
+    print(df.columns)
+    print(table_colums.keys())
     df.columns = map(str.lower, df.columns)
     columns_to_add = set(table_colums.keys()) - set(df.columns)
     for col in columns_to_add:
         df[col] = ''
-    df = df[[column for column in table_colums.keys()]]
+    df = df[[column for column in table_colums]]
+    print(df.columns)
 
     return [[{'name': col.lower(), 'id': col.lower()} for col in df.columns], df.to_dict('records'), ]
 
@@ -101,5 +110,19 @@ def hide_show_factory(id_target: str):
     )
     def hide_show(n):
         if n:
-            return n%2==0, ('secondary', 'info')[n%2]
+            return n % 2 == 0, ('secondary', 'info')[n % 2]
         raise PreventUpdate
+
+
+def get_init_data_from_db_factory(table_columns: dict):
+    def get_init_data_from_db():
+        df = pd.read_sql_table(table_name="activity", con=engine)
+        if "station_nb" in df.columns:
+            df.loc[~pd.isna(df.station_nb)] = df[~pd.isna(
+                df.station_nb)].astype({"station_nb": int})
+        df['activity_block_duration'] = pd.to_timedelta(
+            df['activity_block_duration']).astype({"activity_block_duration": str})
+        records = df[[c for c in table_columns]].to_dict('rows')
+        return records
+
+    return get_init_data_from_db
