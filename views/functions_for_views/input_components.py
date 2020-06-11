@@ -64,7 +64,7 @@ NavBar = dbc.Navbar(
                         src='data:image/png;base64,{}'.format(encoded_image.decode())),
                 ),
                 dbc.Col(
-                    dbc.NavItem(dbc.NavLink("Tutorial 1", href="#")),
+                    dbc.NavItem(dbc.NavLink("Tutorial", href="/tutorials")),
                 ),
                 dbc.Col(
                     dbc.NavItem(dbc.NavLink(
@@ -79,7 +79,7 @@ NavBar = dbc.Navbar(
                                             id='Production_mix', href='/mix')),
                 ),
                 dbc.Col(
-                    dbc.NavItem(dbc.NavLink('actividades',
+                    dbc.NavItem(dbc.NavLink('Actividades',
                                             id='actividades', href='/actividades')),
                 ),
             ]
@@ -93,7 +93,7 @@ NavBar = dbc.NavbarSimple(
         html.Img(
             src='data:image/png;base64,{}'.format(encoded_image.decode())),
         ),
-        dbc.NavItem(dbc.NavLink("Tutorial 1", href="#")),
+        dbc.NavItem(dbc.NavLink("Tutorial", href="/tutorials")),
         dbc.NavItem(dbc.NavLink(
             'Estações', id='station_mix', href='/station')),
         dbc.NavItem(dbc.NavLink(
@@ -101,7 +101,7 @@ NavBar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink('Mix de Produção',
                                 id='Production_mix', href='/mix')),
         dbc.NavItem(dbc.NavLink('Atividades',
-                                id='actividades', href='/actividades')),
+                                id='Actividades', href='/actividades')),
 
     ]
 )
