@@ -78,8 +78,8 @@ update_table_initial_factory("table_initial_activities",
 
 layout = html.Div(id='pageContent2', children=[
     html.H1('Salve suas atividades'),
-    html.Hr(id="horizontalLine"),
-    html.Div(id='instructions', children=[
+    html.Hr(),
+    html.Div(children=[
              'Forneça a lista das atividades da produção']),
     dbc.Button(id="load_from_db", children="load data from db"),
     dcc.Upload(id='upload_activities',

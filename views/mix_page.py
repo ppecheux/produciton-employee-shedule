@@ -142,8 +142,8 @@ layout = html.Div(id='pageContent2', children=[
     html.Br(),
     html.H3('Altere o takt time configurando estes parâmetros '),
     takt_time_input,
-    html.Hr(id="horizontalLine"),
-    html.Div(id='instructions', children=[
+    html.Hr(),
+    html.Div(children=[
              'Lista de productos a serem produzidos']),
     dcc.Upload(
         id='upload_mix_data',
