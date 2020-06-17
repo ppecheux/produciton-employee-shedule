@@ -47,20 +47,16 @@ def assign_employees_like_stations(df_stations_activities: pd.DataFrame, nb_oper
     else:
         shift_duration = shift_duration*60
     
-    print(f'rest duration{rest_production_duration}')
 
     duration_operator = shift_duration*efficiency/100
-    print(f'duration op {duration_operator}')
     total_working_duration = duration_operator*nb_operators
     
     if rest_production_duration > total_working_duration:
-        print('not enought employee time')
         return None
 
     rest_nb_operators = nb_operators
     duration_operator = min(
         duration_operator, rest_production_duration/rest_nb_operators)
-    print(f'duration op {duration_operator}')
 
     operator_nb = 1
     working_on_stations = set()
