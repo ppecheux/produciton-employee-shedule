@@ -88,6 +88,8 @@ def data_table_suggested_order(init_data, table_nb_products, nb_stations):
 def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_operator_efficiency, table_nb_products, figure):
     if not table_data or not table_nb_products:
         raise PreventUpdate
+    df_nb_products = pd.DataFrame.from_records(table_nb_products)
+    nb_products = df_nb_products.quantity.sum()
     df = pd.DataFrame.from_records(table_data)
     df.station_nb = pd.to_numeric(df.station_nb, errors='coerce')
     table_data_names = df.station_nb[~np.isnan(df.station_nb)].unique()
@@ -116,7 +118,7 @@ def figure_graph_suggested_order(table_data, input_shift_duration_hour, input_op
     ]+[
         {
             'x': list(station_durations.keys()),
-            'y': [input_shift_duration_hour*60*input_operator_efficiency/(len(table_data_names)*100)] * len(table_data_names),
+            'y': [input_shift_duration_hour*60*input_operator_efficiency/(nb_products*100)] * len(table_data_names),
             'name': 'takt time'
         }
     ]

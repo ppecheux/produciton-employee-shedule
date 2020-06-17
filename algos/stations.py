@@ -40,6 +40,7 @@ def fill_sequence_rank(df: pd.DataFrame) -> pd.DataFrame:
 def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> pd.DataFrame:
     df_weighted_avg['station_nb'] = [np.nan] * len(df_weighted_avg)
 
+    df_weighted_avg['max_sequence_rank'] = df_weighted_avg[['min_sequence_rank', 'max_sequence_rank']].max(axis=1)
     min_sequence_rank = set(df_weighted_avg['min_sequence_rank'].unique())
     max_sequence_rank = set(df_weighted_avg['max_sequence_rank'].unique())
     unique_ranks = sorted(list(min_sequence_rank | max_sequence_rank))
@@ -59,8 +60,8 @@ def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> 
         possible_activities = df_weighted_avg[(df_weighted_avg.min_sequence_rank <= rank)
                                               & (df_weighted_avg.max_sequence_rank >= rank)
                                               & (pd.isna(df_weighted_avg.station_nb))]
-
-        while len(possible_activities):
+        
+        while not possible_activities.empty:
             possible_activities.loc[:,'dist_to_target_time'] = (time_per_station
                                                           - cummulated_duration
                                                           - possible_activities.weighted_average/2)
@@ -82,7 +83,7 @@ def assign_stations_for_avg(df_weighted_avg: pd.DataFrame, nb_stations: int) -> 
             possible_activities = possible_activities[possible_activities.index != activity]
             rest_production_duration -= df_weighted_avg.loc[activity,
                                                             'weighted_average']
-
+        
     return df_weighted_avg
 
 

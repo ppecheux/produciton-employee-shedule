@@ -60,7 +60,8 @@ def data_table_suggested_order(init_data):
     df_activities = pd.DataFrame.from_records(init_data)
     df_activities.replace('', np.nan, inplace=True)
     df_activities.dropna(inplace=True)
-    df_activities.name.str.strip()
+    if not df_activities.name.empty:
+        df_activities.name.str.strip()
 
     try:
         df_activities = df_activities.astype({"quantity": int})
