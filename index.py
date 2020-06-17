@@ -12,12 +12,13 @@ from datetime import datetime as dt
 import sys
 
 dashboard_pages = {'/mix': mix_page,
-                   '/station': station_page, '/operator': operator_page, '/tutorials':tutorials}
+                   '/station': station_page, 
+                   '/operator': operator_page, 
+                   '/tutorials': tutorials, 
+                   '/actividades': activity_table}
 app.layout = html.Div([
     dcc.Location(id='url'),
-    html.Div(id='homepage', children=[
-        NavBar
-    ]),
+    NavBar,
     html.Div(id='pageContent'),
 
     Footer
@@ -33,9 +34,6 @@ def displayPage(pathname):
 
     if pathname == '/':
         layout = homepage.layout
-
-    elif pathname == '/actividades':
-        layout = activity_table.layout
 
     elif not layout:
         layout = error.layout

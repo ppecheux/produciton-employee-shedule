@@ -18,14 +18,14 @@ img {
 
 }
 
-#tutorialTitle{
+.tutorialTitle{
   margin :30px;
   background-color: lightgrey;
   text-align: center;
   font-size: 35px;
 }
 
-#tutorialText{
+.tutorialText{
   text-align: left;
   line-height: 2.1;
   font-family: Arial, Helvetica, sans-serif;
@@ -75,11 +75,11 @@ hr{
   height: 80%;
   margin-top: 7%;
   text-align: center;
-  background-image:url("firstpage2.png");
+  /* background-image:url("firstpage2.png"); */
   opacity: 50;
 }
 
-#pageContent2{
+.pageContent2{
   background-color: white;
 }
 #text {
